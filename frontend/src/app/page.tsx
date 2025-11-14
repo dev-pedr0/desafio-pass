@@ -1,5 +1,5 @@
 async function getVeiculos() {
-  const res = await fetch("http://localhost:3001/veiculo/nomes", {
+  const res = await fetch("https://desafio-pass-backend.onrender.com/veiculo/nomes", {
     cache: "no-store"
   });
 
