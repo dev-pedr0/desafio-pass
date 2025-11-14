@@ -1,5 +1,5 @@
 async function getVeiculos() {
-  const res = await fetch("http://localhost:3000/veiculo/nomes", {
+  const res = await fetch("http://localhost:3001/veiculo/nomes", {
     cache: "no-store"
   });
 
