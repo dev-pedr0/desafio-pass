@@ -1,6 +1,6 @@
 "use client";
 
-import { PanelsLeftBottom, Activity, BusFront, Package, BedDouble, Ticket, Camera, Star, Map, DollarSign, CalendarDays, Puzzle, MapPin, FileText, Settings } from "lucide-react";
+import { PanelsLeftBottom, Activity, BusFront, Package, BedDouble, Ticket, Camera, Star, Map, DollarSign, CalendarDays, Puzzle, MapPin, FileText, Settings, Building2 } from "lucide-react";
 
 export const menuSection = [
     {
@@ -43,5 +43,19 @@ export const menuSection = [
             {icon: Settings, label: "Configurações", href: "/configuracao"},
         ],
     },
-]
+];
 
+export const companySection = [
+    {
+        icon: Building2,
+        name: "Pass",
+    },
+    {
+        icon: Building2,
+        name: "Allinsys",
+    },
+    {
+        icon: Building2,
+        name: "Google",
+    },
+];
