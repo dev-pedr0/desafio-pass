@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model abastecimento_veiculo {
+  id             Int          @id @default(autoincrement())
+  veiculo_id     Int
+  data           DateTime?    @db.Date
+  fornecedor     String?      @db.VarChar(100)
+  combustivel_id Int?
+  litros         Decimal?     @db.Decimal(10, 2)
+  combustivel    combustivel? @relation(fields: [combustivel_id], references: [id], map: "fk_abastecimento_combustivel")
+  veiculo        veiculo      @relation(fields: [veiculo_id], references: [id], onDelete: Cascade, map: "fk_abastecimento_veiculo_veiculo")
+
+  @@index([combustivel_id], map: "fk_abastecimento_combustivel")
+  @@index([veiculo_id], map: "idx_abastecimento_veiculo")
+}
+
+model categoria {
+  id      Int       @id @default(autoincrement())
+  nome    String    @db.VarChar(100)
+  veiculo veiculo[]
+}
+
+model classificacao {
+  id      Int       @id @default(autoincrement())
+  nome    String    @db.VarChar(100)
+  veiculo veiculo[]
+}
+
+model combustivel {
+  id                    Int                     @id @default(autoincrement())
+  nome                  String                  @db.VarChar(50)
+  abastecimento_veiculo abastecimento_veiculo[]
+  veiculo               veiculo[]
+}
+
+model companhia {
+  id      Int       @id @default(autoincrement())
+  nome    String    @db.VarChar(100)
+  veiculo veiculo[]
+}
+
+model documento_veiculo {
+  id                   Int       @id @default(autoincrement())
+  veiculo_id           Int
+  tipo                 String    @db.VarChar(100)
+  arquivo              String?   @db.VarChar(255)
+  vencimento           DateTime? @db.Date
+  antecipacao          Boolean?  @default(false)
+  dias_para_vencimento Int?
+  criado_em            DateTime  @default(now()) @db.DateTime(0)
+  veiculo              veiculo   @relation(fields: [veiculo_id], references: [id], onDelete: Cascade, map: "fk_doc_veiculo_veiculo")
+
+  @@index([veiculo_id], map: "idx_doc_veiculo_veiculo")
+}
+
+model imagem_veiculo {
+  id         Int      @id @default(autoincrement())
+  veiculo_id Int
+  url        String   @db.VarChar(255)
+  criado_em  DateTime @default(now()) @db.DateTime(0)
+  veiculo    veiculo  @relation(fields: [veiculo_id], references: [id], onDelete: Cascade, map: "fk_img_veiculo_veiculo")
+
+  @@index([veiculo_id], map: "idx_imagem_veiculo_veiculo")
+}
+
+model marca {
+  id      Int       @id @default(autoincrement())
+  nome    String    @db.VarChar(100)
+  veiculo veiculo[]
+}
+
+model ocorrencia_veiculo {
+  id                   Int                   @id @default(autoincrement())
+  veiculo_id           Int
+  data                 DateTime?             @db.Date
+  classificacao_id     Int?
+  seriedade_id         Int?
+  descricao            String?               @db.Text
+  anexo                String?               @db.VarChar(255)
+  tipo_ocorrencia      tipo_ocorrencia?      @relation(fields: [classificacao_id], references: [id], map: "fk_ocorrencia_classificacao")
+  seriedade_ocorrencia seriedade_ocorrencia? @relation(fields: [seriedade_id], references: [id], map: "fk_ocorrencia_seriedade")
+  veiculo              veiculo               @relation(fields: [veiculo_id], references: [id], onDelete: Cascade, map: "fk_ocorrencia_veiculo_veiculo")
+
+  @@index([classificacao_id], map: "fk_ocorrencia_classificacao")
+  @@index([seriedade_id], map: "fk_ocorrencia_seriedade")
+  @@index([veiculo_id], map: "idx_ocorrencia_veiculo")
+}
+
+model seriedade_ocorrencia {
+  id                 Int                  @id @default(autoincrement())
+  nome               String               @db.VarChar(100)
+  ocorrencia_veiculo ocorrencia_veiculo[]
+}
+
+model tipo_ocorrencia {
+  id                 Int                  @id @default(autoincrement())
+  nome               String               @db.VarChar(100)
+  ocorrencia_veiculo ocorrencia_veiculo[]
+}
+
+model tipo_placa {
+  id      Int       @id @default(autoincrement())
+  nome    String    @db.VarChar(50)
+  veiculo veiculo[]
+}
+
+model usuario {
+  id      Int       @id @default(autoincrement())
+  nome    String    @db.VarChar(100)
+  email   String    @unique(map: "uk_usuario_email") @db.VarChar(150)
+  veiculo veiculo[]
+}
+
+model veiculo {
+  id                    Int                     @id @default(autoincrement())
+  criado_em             DateTime                @default(now()) @db.DateTime(0)
+  identificador         String?                 @db.VarChar(100)
+  companhia_id          Int?
+  status                veiculo_status?         @default(pendente)
+  modelo                String?                 @db.VarChar(100)
+  ano                   Int?
+  marca_id              Int?
+  categoria_id          Int?
+  classificacao_id      Int?
+  capacidade            Int?
+  portais               Int?
+  estado                String?                 @db.VarChar(50)
+  uf                    String?                 @db.Char(2)
+  tipo_placa_id         Int?
+  placa                 String?                 @db.VarChar(20)
+  renavam               String?                 @db.VarChar(20)
+  chassi                String?                 @db.VarChar(30)
+  revisao_km            Int?
+  combustivel_id        Int?
+  descricao             String?                 @db.Text
+  usuario_id            Int?
+  abastecimento_veiculo abastecimento_veiculo[]
+  documento_veiculo     documento_veiculo[]
+  imagem_veiculo        imagem_veiculo[]
+  ocorrencia_veiculo    ocorrencia_veiculo[]
+  categoria             categoria?              @relation(fields: [categoria_id], references: [id], map: "fk_veiculo_categoria")
+  classificacao         classificacao?          @relation(fields: [classificacao_id], references: [id], map: "fk_veiculo_classificacao")
+  combustivel           combustivel?            @relation(fields: [combustivel_id], references: [id], map: "fk_veiculo_combustivel")
+  companhia             companhia?              @relation(fields: [companhia_id], references: [id], map: "fk_veiculo_companhia")
+  marca                 marca?                  @relation(fields: [marca_id], references: [id], map: "fk_veiculo_marca")
+  tipo_placa            tipo_placa?             @relation(fields: [tipo_placa_id], references: [id], map: "fk_veiculo_tipo_placa")
+  usuario               usuario?                @relation(fields: [usuario_id], references: [id], map: "fk_veiculo_usuario")
+
+  @@index([categoria_id], map: "fk_veiculo_categoria")
+  @@index([classificacao_id], map: "fk_veiculo_classificacao")
+  @@index([combustivel_id], map: "fk_veiculo_combustivel")
+  @@index([companhia_id], map: "fk_veiculo_companhia")
+  @@index([marca_id], map: "fk_veiculo_marca")
+  @@index([tipo_placa_id], map: "fk_veiculo_tipo_placa")
+  @@index([usuario_id], map: "fk_veiculo_usuario")
+  @@index([identificador], map: "idx_veiculo_identificador")
+  @@index([placa], map: "idx_veiculo_placa")
+}
+
+enum veiculo_status {
+  pendente
+  cancelado
+  liberado
+}

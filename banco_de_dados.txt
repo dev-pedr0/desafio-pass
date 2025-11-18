@@ -1,0 +1,105 @@
+🧱 Estrutura final das tabelas
+1️⃣ Tabela Usuario
+
+Para saber quem criou o registro, quem abasteceu, etc.
+
+Campo	Tipo	Observação
+id	INT (PK, auto increment)	
+nome	VARCHAR(100)	
+email	VARCHAR(150)	
+2️⃣ Tabela Veiculo
+
+Tabela principal do cadastro.
+
+Campo	Tipo	Observação
+id	INT (PK, auto increment)	
+criado_em	DATETIME	default now()
+identificador	VARCHAR(100)	código interno
+companhia_id	INT	FK → Companhia.id
+status	ENUM('pendente','cancelado','liberado')	
+modelo	VARCHAR(100)	
+ano	INT	
+marca_id	INT	FK → Marca.id
+categoria_id	INT	FK → Categoria.id
+classificacao_id	INT	FK → Classificacao.id
+capacidade	INT	
+portais	INT	
+estado	VARCHAR(50)	obtido pela placa
+uf	CHAR(2)	
+tipo_placa_id	INT	FK → TipoPlaca.id
+placa	VARCHAR(10)	(regex possível, ex: [A-Z]{3}-\d{4} ou padrão Mercosul)
+renavam	VARCHAR(20)	(regex opcional para formato numérico)
+chassi	VARCHAR(30)	(regex opcional, ex: [A-HJ-NPR-Z0-9]{17})
+revisao_km	INT	
+combustivel_id	INT	FK → Combustivel.id
+descricao	TEXT	(campo “Descrição” do formulário)
+usuario_id	INT	FK → Usuario.id (quem cadastrou)
+3️⃣ Tabelas de referência (dropdowns)
+
+Essas são fixas mas podem ser CRUDáveis depois:
+
+Companhia (empresas)
+
+Marca
+
+Categoria
+
+Classificacao
+
+TipoPlaca
+
+Combustivel
+
+TipoOcorrencia
+
+SeriedadeOcorrencia
+
+Todas seguem o mesmo padrão:
+
+Campo	Tipo
+id	INT (PK)
+nome	VARCHAR(100)
+4️⃣ Tabela ImagemVeiculo
+Campo	Tipo	Observação
+id	INT (PK)	
+veiculo_id	INT	FK → Veiculo.id
+url	VARCHAR(255)	caminho do arquivo/imagem
+criado_em	DATETIME	default now()
+
+✅ Separada da tabela de veículo, pois um veículo pode ter várias imagens.
+
+5️⃣ Tabela DocumentoVeiculo
+Campo	Tipo	Observação
+id	INT (PK)	
+veiculo_id	INT	FK → Veiculo.id
+tipo	VARCHAR(100)	nome do documento
+arquivo	VARCHAR(255)	(pode guardar o nome ou URL do arquivo)
+vencimento	DATE	
+antecipacao	BOOLEAN	toggle
+dias_para_vencimento	INT	pode ser calculado via backend ou trigger
+criado_em	DATETIME	default now()
+
+✅ Também separada — vários documentos por veículo.
+
+6️⃣ Tabela OcorrenciaVeiculo
+Campo	Tipo	Observação
+id	INT (PK)	
+veiculo_id	INT	FK → Veiculo.id
+data	DATE	
+classificacao_id	INT	FK → TipoOcorrencia.id
+seriedade_id	INT	FK → SeriedadeOcorrencia.id
+descricao	TEXT	
+anexo	VARCHAR(255)	nome/URL do arquivo
+
+✅ Um veículo pode ter várias ocorrências.
+
+7️⃣ Tabela AbastecimentoVeiculo
+Campo	Tipo	Observação
+id	INT (PK)	
+veiculo_id	INT	FK → Veiculo.id
+data	DATE	
+fornecedor	VARCHAR(100)	
+combustivel_id	INT	FK → Combustivel.id
+litros	DECIMAL(10,2)	
+
+✅ Histórico separado, um veículo pode ter muitos abastecimentos.
