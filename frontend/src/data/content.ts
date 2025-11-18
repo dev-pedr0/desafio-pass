@@ -59,3 +59,38 @@ export const companySection = [
         name: "Google",
     },
 ];
+
+export const passApss = [
+    {
+        image: "images/workspace.webp",
+        name: "Workspace"
+    },
+    {
+        image: "images/transfer.webp",
+        name: "Transfer"
+    },
+    {
+        image: "images/marketplace.webp",
+        name: "Marketplace"
+    },
+    {
+        image: "images/flow.webp",
+        name: "Flow"
+    },
+    {
+        image: "images/balance.webp",
+        name: "Balance"
+    },
+    {
+        image: "images/office.webp",
+        name: "Office"
+    },
+    {
+        image: "images/channel.webp",
+        name: "Channel"
+    },
+    {
+        image: "images/connect.webp",
+        name: "Connect"
+    }
+]
