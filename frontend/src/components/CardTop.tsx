@@ -1,6 +1,8 @@
 import { PanelLeft } from "lucide-react";
 import { ThemeToggleButton } from "./ThemeToggleButton";
 import { SearchSection } from "./SearchSection";
+import { LanguageSelector } from "./LanguageSelector";
+import { AppsSection } from "./AppsSection";
 
 export function CardTop() {
     return (
@@ -8,6 +10,8 @@ export function CardTop() {
             <PanelLeft className="h-8 w-8 p-2 cursor-pointer hover:bg-sidebar-accent hover:text-foreground hover:rounded-full"/>
             <SearchSection/>
             <ThemeToggleButton/>
+            <LanguageSelector/>
+            <AppsSection/>
         </div>
     );
 }
