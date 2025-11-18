@@ -3,6 +3,7 @@ import { ThemeToggleButton } from "./ThemeToggleButton";
 import { SearchSection } from "./SearchSection";
 import { LanguageSelector } from "./LanguageSelector";
 import { AppsSection } from "./AppsSection";
+import { UserSection } from "./UserSection";
 
 export function CardTop() {
     return (
@@ -12,6 +13,7 @@ export function CardTop() {
             <ThemeToggleButton/>
             <LanguageSelector/>
             <AppsSection/>
+            <UserSection/>
         </div>
     );
 }
