@@ -8,9 +8,9 @@
 "use client";
 
 import { CardTop } from "../components/CardTop";
-import { FetchApi } from "../components/FetchApi";
 import { SideMenuSection } from "../components/SideMenuSection";
 import { SideMenuTop } from "../components/SideMenuTop";
+import { VehicleTable } from "../components/VehicleTable";
 import { menuSection } from "../data/content";
 
 export default function Home() {
@@ -23,9 +23,11 @@ export default function Home() {
           <SideMenuSection key={index} title={section.title} items={section.items}/>
         ))}
       </div>
-      <div className="bg-background w-full m-2 rounded-xl">
+      <div className="bg-background m-2 rounded-xl w-full max-w-full overflow-x-hidden">
         <CardTop/>
-        <FetchApi/>
+        <div className="p-6">
+          <VehicleTable/>
+        </div>
       </div>
     </div>
   );

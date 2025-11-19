@@ -5,8 +5,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class VeiculoService {
     constructor(private prisma: PrismaService) {}
 
-  findAll() {
+  findAll(page: number, limit: number) {
     return this.prisma.veiculo.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
       include: {
         marca: true,
         categoria: true,
