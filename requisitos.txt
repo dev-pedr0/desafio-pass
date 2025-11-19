@@ -16,3 +16,5 @@ Tabela veículo e ocorrencia linkados por foreign key
 Foco em telas maiores. Não necessita de adaptção para celular
 
 https://case.pass.business/
+
+Deploy: vercel, render, railway

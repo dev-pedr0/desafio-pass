@@ -9,9 +9,4 @@ export class VeiculoController {
     findAll() {
         return this.veiculoService.findAll();
     }
-
-    @Get('nomes')
-        async listarNomes() {
-        return this.veiculoService.listarNomes();
-  }
 }

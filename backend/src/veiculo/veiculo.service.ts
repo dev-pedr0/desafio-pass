@@ -10,7 +10,18 @@ export class VeiculoService {
       include: {
         marca: true,
         categoria: true,
+        classificacao: true,
         combustivel: true,
+        companhia: true,
+        tipo_placa: true,
+        usuario: true,
+        abastecimento_veiculo: true,
+        documento_veiculo: true,
+        imagem_veiculo: true,
+        ocorrencia_veiculo: true,
+      },
+      orderBy: {
+        id: 'asc',
       },
     });
   }
