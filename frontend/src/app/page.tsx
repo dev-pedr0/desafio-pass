@@ -8,6 +8,7 @@
 "use client";
 
 import { CardTop } from "../components/CardTop";
+import { FetchApi } from "../components/FetchApi";
 import { SideMenuSection } from "../components/SideMenuSection";
 import { SideMenuTop } from "../components/SideMenuTop";
 import { menuSection } from "../data/content";
@@ -24,6 +25,7 @@ export default function Home() {
       </div>
       <div className="bg-background w-full m-2 rounded-xl">
         <CardTop/>
+        <FetchApi/>
       </div>
     </div>
   );
