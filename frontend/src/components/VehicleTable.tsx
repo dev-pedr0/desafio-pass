@@ -169,10 +169,10 @@ export function VehicleTable() {
                                         <span
                                             className={`px-2 py-1 text-xs rounded-md ${
                                                 vehicle.status === "liberado"
-                                                ? "bg-green-500 text-white"
+                                                ? "bg-chart-2 text-foreground"
                                                 : vehicle.status === "pendente"
-                                                ? "bg-yellow-500 text-black"
-                                                : "bg-red-500 text-white"
+                                                ? "bg-chart-3 text-foreground"
+                                                : "bg-chart-5 text-foreground"
                                             }`}
                                         >
                                             {vehicle.status}
