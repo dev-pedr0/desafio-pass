@@ -16,12 +16,12 @@ export interface Veiculo {
   categoria?: { nome: string } | null;
 }
 
-export function useVehicles(page = 1) {
+export function useVehicles(page = 1, limit = 20) {
     const [vehicles, setVehicles] = useState<Veiculo[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`/api/veiculos?page=${page}&limit=10`)
+        fetch(`/api/veiculos?page=${page}&limit=${limit}`)
         .then((res) => res.json())
         .then((data) => {
             setVehicles(data);
@@ -31,7 +31,7 @@ export function useVehicles(page = 1) {
             console.error("Erro ao buscar veículos:", err);
             setLoading(false);
         });
-    }, [page]);
+    }, [page, limit]);
 
     return { vehicles, loading };
 }

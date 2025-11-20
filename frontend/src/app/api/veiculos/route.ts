@@ -1,12 +1,16 @@
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
-        //const URL = "https://desafio-pass-backend.onrender.com";
-        const URL = "http://localhost:3001";
+        //const BASE_URL = "https://desafio-pass-backend.onrender.com";
+        const BASE_URL = "http://localhost:3001";
 
-        const res = await fetch(`${URL}/veiculo`, {
-           cache: "no-store", 
+        const { searchParams } = new URL(request.url);
+        const page = searchParams.get("page") ?? "1";
+        const limit = searchParams.get("limit") ?? "10";
+
+        const res = await fetch(`${BASE_URL}/veiculo?page=${page}&limit=${limit}`, {
+            cache: "no-store",
         });
 
         if (!res.ok) {

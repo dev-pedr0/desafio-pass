@@ -8,9 +8,39 @@ import { tableButtons } from "../data/content";
 import { GenericButtons } from "./GenericButtons";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, CloudDownload, Plus, RotateCw } from "lucide-react";
+import { useState } from "react";
+import { PagesButton } from "./PagesButton";
 
 export function VehicleTable() {
-    const { vehicles, loading } = useVehicles();
+    const {vehicles, loading } = useVehicles();
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const totalPages = Math.ceil(vehicles.length / itemsPerPage);
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedVehicles = vehicles.slice(startIndex, startIndex + itemsPerPage);
+
+    function goToFirstPage() {
+        setCurrentPage(1);
+    }
+
+    function goToPrevPage() {
+        setCurrentPage((prev) => Math.max(1, prev - 1));
+    }
+
+    function goToNextPage() {
+        setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+    }
+
+    function goToLastPage() {
+        setCurrentPage(totalPages);
+    }
+
+    function handleItemsPerPage(n: number) {
+        setItemsPerPage(n);
+        setCurrentPage(1);
+    }
 
     if (loading) {
         return (
@@ -71,7 +101,7 @@ export function VehicleTable() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {vehicles.map((vehicle) => (
+                            {paginatedVehicles.map((vehicle) => (
                                 <TableRow key={vehicle.id}>
                                     <TableCell>{vehicle.identificador}</TableCell>
                                     <TableCell>{new Date(vehicle.criado_em).toLocaleDateString("pt-BR")}</TableCell>
@@ -106,6 +136,12 @@ export function VehicleTable() {
                 </div>
                 <ScrollBar orientation="horizontal" />
             </ScrollArea> 
+            <div className="flex items-center">
+                <PagesButton
+                    itemsPerPage={itemsPerPage}
+                    onChange={(n) => handleItemsPerPage(n)}
+                />
+            </div>
         </div>
     );
 }
