@@ -3,6 +3,11 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useVehicles } from "../hooks/useVehicles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { SearchSection } from "./SearchSection";
+import { tableButtons } from "../data/content";
+import { GenericButtons } from "./GenericButtons";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, CloudDownload, Plus, RotateCw } from "lucide-react";
 
 export function VehicleTable() {
     const { vehicles, loading } = useVehicles();
@@ -16,7 +21,42 @@ export function VehicleTable() {
     return (
         <div className="border rounded-lg p-2 bg-card">
             <ScrollArea className="overflow-auto">
-                <div className="w-fit w-full p-2">
+                <div className="flex gap-2 justify-between items-center pb-3 border-b">
+                    <div className="flex gap-2 items-center">
+                        <SearchSection inputClassName=""/>
+                        <GenericButtons items={tableButtons}/>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                        <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
+                            >
+                            <RotateCw className="h-4 w-4"/>
+                            <span className="text-md">Atualizar</span>
+                        </Button>
+                        <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
+                            >
+                            <CloudDownload className="h-4 w-4"/>
+                            <span className="text-md">Export</span>
+                            <div className="w-px h-full bg-border"></div>
+                            <ChevronDown className="h-4 w-4"/>
+                        </Button>
+                        <div className="w-px h-6 bg-border"></div>
+                        <Button 
+                            size="sm" 
+                            variant="default" 
+                            className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
+                            >
+                            <Plus className="h-4 w-4"/>
+                            <span className="text-md">Adicionar</span>
+                        </Button>
+                    </div>
+                </div>
+                <div className="w-full p-2">
                     <Table className="text-xs">
                         <TableHeader>
                             <TableRow>

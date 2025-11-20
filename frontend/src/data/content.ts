@@ -1,6 +1,6 @@
 "use client";
 
-import { PanelsLeftBottom, Activity, BusFront, Package, BedDouble, Ticket, Camera, Star, Map, DollarSign, CalendarDays, Puzzle, MapPin, FileText, Settings, Building2 } from "lucide-react";
+import { PanelsLeftBottom, Activity, BusFront, Package, BedDouble, Ticket, Camera, Star, Map, DollarSign, CalendarDays, Puzzle, MapPin, FileText, Settings, Building2, Funnel } from "lucide-react";
 
 export const menuSection = [
     {
@@ -93,4 +93,15 @@ export const passApss = [
         image: "images/connect.webp",
         name: "Connect"
     }
-]
+];
+
+export const tableButtons = [
+    {
+        icon: Funnel,
+        label: "Modo",
+    },
+    {
+        icon: Funnel,
+        label: "Status",
+    },
+];

@@ -1,13 +1,23 @@
 import { Search } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/Tooltip";
 
-export function SearchSection() {
+type Props = {
+  inputClassName?: string;
+};
+
+export function SearchSection({ inputClassName = "" }: Props) {
     return(
-        <div className="flex items-center grow gap-1">
+        <div className={`flex items-center ${inputClassName} gap-1`}>
             <input
                 type="text"
                 placeholder="Pesquisar..."
-                className="grow bg-transparent border border-input rounded-md px-2 py-1 pr-9 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                className={
+                    `bg-transparent border border-input 
+                    rounded-md px-2 py-1 pr-9 text-sm 
+                    placeholder:text-muted-foreground 
+                    focus:outline-none focus:ring-2 
+                    focus:ring-ring ${inputClassName}`
+                }
             />
             <TooltipProvider>
                 <Tooltip>
