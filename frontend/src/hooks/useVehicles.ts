@@ -16,7 +16,7 @@ export interface Veiculo {
   categoria?: { nome: string } | null;
 }
 
-export function useVehicles(page = 1, limit = 20) {
+export function useVehicles(page = 1, limit = 100) {
     const [vehicles, setVehicles] = useState<Veiculo[]>([]);
     const [loading, setLoading] = useState(true);
 

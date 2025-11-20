@@ -86,7 +86,7 @@ export function VehicleTable() {
                         </Button>
                     </div>
                 </div>
-                <div className="w-full p-2">
+                <div className="w-full max-h-150 p-2">
                     <Table className="text-xs">
                         <TableHeader>
                             <TableRow>
@@ -135,12 +135,17 @@ export function VehicleTable() {
                     </Table>
                 </div>
                 <ScrollBar orientation="horizontal" />
+                <ScrollBar orientation="vertical" />
             </ScrollArea> 
-            <div className="flex items-center">
+            <div className="flex items-center p-2 gap-2">
                 <PagesButton
                     itemsPerPage={itemsPerPage}
                     onChange={(n) => handleItemsPerPage(n)}
                 />
+                <span className="font-medium text-sm">Página {currentPage} de {totalPages}</span>
+                <div>
+                    
+                </div>
             </div>
         </div>
     );

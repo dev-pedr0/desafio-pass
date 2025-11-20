@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
     try {
-        //const BASE_URL = "https://desafio-pass-backend.onrender.com";
-        const BASE_URL = "http://localhost:3001";
+        const BASE_URL = "https://desafio-pass-backend.onrender.com";
+        // const BASE_URL = "http://localhost:3001";
 
         const { searchParams } = new URL(request.url);
         const page = searchParams.get("page") ?? "1";
