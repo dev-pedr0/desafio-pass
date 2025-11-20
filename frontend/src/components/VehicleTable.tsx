@@ -10,17 +10,27 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown, CloudDownload, Plus, RotateCw } from "lucide-react";
 import { useState } from "react";
 import { PagesButton } from "./PagesButton";
+import { ChangePageButton } from "./ChangePageButton";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function VehicleTable() {
     const {vehicles, loading } = useVehicles();
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
+    const [selected, setSelected] = useState<number[]>([]);
 
     const totalPages = Math.ceil(vehicles.length / itemsPerPage);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedVehicles = vehicles.slice(startIndex, startIndex + itemsPerPage);
+    
+    const isPageFullySelected =
+        paginatedVehicles.length > 0 &&
+        paginatedVehicles.every((vehicle) => selected.includes(vehicle.id));
 
+    const selectedCount = selected.length;
+    const totalCount = vehicles.length;
+    
     function goToFirstPage() {
         setCurrentPage(1);
     }
@@ -40,6 +50,30 @@ export function VehicleTable() {
     function handleItemsPerPage(n: number) {
         setItemsPerPage(n);
         setCurrentPage(1);
+    }
+
+    function toggleSelect(id: number) {
+        setSelected((prev) =>
+            prev.includes(id)
+                ? prev.filter((v) => v !== id)
+                : [...prev, id]
+        );
+    }
+
+    
+    function isSelected(id: number) {
+        return selected.includes(id);
+    }
+
+    function toggleSelectAll() {
+        const pageIds = paginatedVehicles.map((v) => v.id);
+        const isAllSelected = pageIds.every((id) => selected.includes(id));
+
+        if (isAllSelected) {
+            setSelected((prev) => prev.filter((id) => !pageIds.includes(id)));
+        } else {
+            setSelected((prev) => [...new Set([...prev, ...pageIds])]);
+        }
     }
 
     if (loading) {
@@ -90,6 +124,12 @@ export function VehicleTable() {
                     <Table className="text-xs">
                         <TableHeader>
                             <TableRow>
+                                <TableHead>
+                                    <Checkbox 
+                                        checked={isPageFullySelected}
+                                        onCheckedChange={toggleSelectAll}
+                                    />
+                                </TableHead>
                                 <TableHead>Identificador</TableHead>
                                 <TableHead>Criado Em</TableHead>
                                 <TableHead>Título</TableHead>
@@ -102,7 +142,16 @@ export function VehicleTable() {
                         </TableHeader>
                         <TableBody>
                             {paginatedVehicles.map((vehicle) => (
-                                <TableRow key={vehicle.id}>
+                                <TableRow 
+                                    key={vehicle.id}
+                                    className={isSelected(vehicle.id) ? "bg-muted/50 border-l-2 border-l-white" : ""}
+                                >
+                                    <TableCell className="w-8">
+                                        <Checkbox
+                                            checked={isSelected(vehicle.id)}
+                                            onCheckedChange={() => toggleSelect(vehicle.id)}
+                                        />
+                                    </TableCell>
                                     <TableCell>{vehicle.identificador}</TableCell>
                                     <TableCell>{new Date(vehicle.criado_em).toLocaleDateString("pt-BR")}</TableCell>
                                     <TableCell>
@@ -136,15 +185,25 @@ export function VehicleTable() {
                 </div>
                 <ScrollBar orientation="horizontal" />
                 <ScrollBar orientation="vertical" />
-            </ScrollArea> 
-            <div className="flex items-center p-2 gap-2">
+            </ScrollArea>
+            <div className="flex items-center p-2 justify-between">
+                <span className="text-sm text-muted-foreground">
+                    {selectedCount} de {totalCount} linha(s) selecionada(s)
+                </span>
                 <PagesButton
                     itemsPerPage={itemsPerPage}
                     onChange={(n) => handleItemsPerPage(n)}
                 />
-                <span className="font-medium text-sm">Página {currentPage} de {totalPages}</span>
-                <div>
-                    
+                <div className="flex gap-2 items-center">
+                    <span className="font-medium text-sm">Página {currentPage} de {totalPages}</span>
+                    <ChangePageButton
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onFirst={goToFirstPage}
+                        onPrev={goToPrevPage}
+                        onNext={goToNextPage}
+                        onLast={goToLastPage}
+                    />
                 </div>
             </div>
         </div>
