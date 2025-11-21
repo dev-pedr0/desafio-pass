@@ -1,5 +1,8 @@
-import { Body, Controller, Get, Param, Patch, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { VeiculoService } from './veiculo.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('veiculo')
 export class VeiculoController {
@@ -49,5 +52,29 @@ export class VeiculoController {
         @Body() data: any
     ) {
         return this.veiculoService.updateVehicle(Number(id), data);
+    }
+
+    @Post(':id/imagens')
+    @UseInterceptors(
+    FilesInterceptor('files', 10, {
+        storage: diskStorage({
+        destination: './uploads',
+        filename: (_, file, cb) => {
+            const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+            const ext = extname(file.originalname);
+            cb(null, unique + ext);
+        },
+        }),
+    })
+    )
+    uploadImages(
+        @Param('id') id: string,
+        @UploadedFiles() files: Express.Multer.File[],
+    ) {
+        return this.veiculoService.uploadImages(Number(id), files);
+    }
+    @Delete(':id/imagens')
+        deleteAllImages(@Param('id') id: string) {
+        return this.veiculoService.deleteAllImages(Number(id));
     }
 }

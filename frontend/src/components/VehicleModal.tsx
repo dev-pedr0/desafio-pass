@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { CircleAlert, NotebookText } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Aperture, CircleAlert, FileText, ImagePlus, NotebookText, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface VehicleModalProps {
@@ -43,7 +44,8 @@ const ESTADOS = [
   { nome: "Tocantins", uf: "TO" },
 ];
 
-const BASE_URL = "http://localhost:3001";
+//const BASE_URL = "http://localhost:3001";
+const BASE_URL = "https://desafio-pass-backend.onrender.com";
 
 export function VehicleModal({ open, onClose, vehicle }: VehicleModalProps) {
     const [form, setForm] = useState<any>({});
@@ -90,6 +92,7 @@ export function VehicleModal({ open, onClose, vehicle }: VehicleModalProps) {
             revisao_km: vehicle.revisao_km || "",
             combustivel_id: vehicle.combustivel?.id || null,
             descricao: vehicle.descricao ?? "",
+            imagem_veiculo: vehicle.imagem_veiculo || [],
         });
     }, [vehicle]);
 
@@ -355,10 +358,100 @@ export function VehicleModal({ open, onClose, vehicle }: VehicleModalProps) {
                     </div>                    
                 </div>
 
-                <div className="bg-card p-2 rounded-md">
+                <div className="flex flex-col gap-2 bg-card p-2 rounded-md">
                     <div className="flex gap-1 items-center">
                         <NotebookText className="w-4 h-4"/>
                         <h3 className="text-base font-semibold">Descrição</h3>
+                    </div>
+                    <Textarea
+                        placeholder="Insira detalhes adicionais do veículo..."
+                        className="w-full min-h-[120px] mt-1"
+                        value={form.descricao || ""}
+                        onChange={(e) => handleChange("descricao", e.target.value)}
+                    />
+                </div>
+
+                <div className="gap-2 bg-card p-2 rounded-md">
+                    <div className="flex gap-1 items-center">
+                        <ImagePlus className="w-4 h-4"/>
+                        <h3 className="text-base font-semibold">Imagens do Veículos</h3>
+                    </div>
+                    <div className="mt-4 flex gap-3">
+                        <label className="flex flex-col justify-center cursor-pointer px-3 py-2 bg-primary text-primary-foreground rounded-md w-fit">
+                            <div className="flex flex-col items-center gap-4">
+                                <Aperture className="w-8 h-8"/>
+                                Envie Arquivos
+                            </div>
+                            <input
+                                type="file"
+                                multiple
+                                className="hidden"
+                                onChange={async (e) => {
+                                    const files = e.target.files;
+                                    if (!files?.length) return;
+
+                                    const formData = new FormData();
+                                    for (const f of files) formData.append("files", f);
+
+                                    await fetch(`${BASE_URL}/veiculo/${form.id}/imagens`, {
+                                        method: "POST",
+                                        body: formData,
+                                    });
+
+                                    const updated = await fetch(`${BASE_URL}/veiculo?page=1&limit=1&id=${form.id}`);
+                                    const json = await updated.json();
+                                    const newVehicle = json.data?.find((v: any) => v.id === form.id);
+
+                                    if (newVehicle) {
+                                        setForm((prev: any) => ({
+                                            ...prev,
+                                            imagem_veiculo: newVehicle.imagem_veiculo
+                                        }));
+                                    }
+                                }}
+                            />
+                        </label>
+
+                        <div className="flex gap-2 flex-wrap mt-3">
+                            {form.imagem_veiculo?.length > 0 ? (
+                                form.imagem_veiculo.map((img: any) => (
+                                    <img
+                                        key={img.id}
+                                        src={`${BASE_URL}${img.url}`}
+                                        className="w-24 h-24 object-cover rounded-md border shadow-sm mb-4"
+                                    />
+                                ))
+                            ) : (
+                                <p className="text-xs text-muted-foreground italic">
+                                    Nenhuma imagem enviada
+                                </p>
+                            )}
+                        </div>  
+                    </div>
+                    {form.imagem_veiculo?.length > 0 && (
+                        <button
+                            onClick={async () => {
+                                await fetch(`${BASE_URL}/veiculo/${form.id}/imagens`, {
+                                    method: "DELETE"
+                                });
+
+                                setForm((prev: any) => ({
+                                    ...prev,
+                                    imagem_veiculo: []
+                                }));
+                            }}
+                            className="mt-3 text-sm text-red-600 hover:underline flex gap-1 items-center cursor-pointer"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            Excluir todas as imagens
+                        </button>
+                    )}
+                </div>
+
+                <div className="gap-2 bg-card p-2 rounded-md">
+                    <div className="flex gap-1 items-center">
+                        <FileText className="w-4 h-4"/>
+                        <h3 className="text-base font-semibold">Documentação</h3>
                     </div>
                 </div>
             </div>

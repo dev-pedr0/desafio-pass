@@ -79,4 +79,29 @@ async findAll(page: number, limit: number) {
             data,
         });
     }
+
+    async uploadImages(veiculoId: number, files: Express.Multer.File[]) {
+        const imagensCriadas: { id: number; url: string; veiculo_id: number; criado_em: Date }[] = [];
+
+        for (const file of files) {
+            const img = await this.prisma.imagem_veiculo.create({
+            data: {
+                veiculo_id: veiculoId,
+                url: `/uploads/${file.filename}`,
+            },
+            });
+
+            imagensCriadas.push(img);
+        }
+
+        return imagensCriadas;
+        }
+
+    async deleteAllImages(veiculoId: number) {
+        await this.prisma.imagem_veiculo.deleteMany({
+            where: { veiculo_id: veiculoId },
+        });
+
+        return { success: true };
+    }
 }
