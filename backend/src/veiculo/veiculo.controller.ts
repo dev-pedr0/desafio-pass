@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { VeiculoService } from './veiculo.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -46,7 +46,7 @@ export class VeiculoController {
         return this.veiculoService.getTiposPlaca();
     }
 
-    @Patch(':id')
+    @Put(':id')
     updateVehicle(
         @Param('id') id: string,
         @Body() data: any

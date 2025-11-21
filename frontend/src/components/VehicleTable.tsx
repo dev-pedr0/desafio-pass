@@ -8,25 +8,28 @@ import { tableButtons } from "../data/content";
 import { GenericButtons } from "./GenericButtons";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, CloudDownload, Pencil, Plus, RotateCw, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PagesButton } from "./PagesButton";
 import { ChangePageButton } from "./ChangePageButton";
 import { Checkbox } from "@/components/ui/checkbox";
-import { VehicleModal } from "./VehicleModal";
+import { VehicleModal } from "./Modals/VehicleModal";
 
 export function VehicleTable() {
-    const {vehicles, loading } = useVehicles();
+    const { vehicles, loading } = useVehicles();
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [selected, setSelected] = useState<number[]>([]);
     const [openEditModal, setOpenEditModal] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState<any>(null);
+    const [vehicleList, setVehicleList] = useState<any[]>([]);
 
-    const vehicleList = vehicles ?? [];
-    //console.log("Render do VehicleTable - vehicles:", vehicles);
+    useEffect(() => {
+        if (vehicles) {
+            setVehicleList(vehicles);
+        }
+    }, [vehicles]);
 
     const totalPages = Math.ceil(vehicleList.length / itemsPerPage);
-
     const startIndex = (currentPage - 1) * itemsPerPage;
     const paginatedVehicles = vehicleList.slice(startIndex, startIndex + itemsPerPage);
     
@@ -37,26 +40,11 @@ export function VehicleTable() {
     const selectedCount = selected.length;
     const totalCount = vehicleList.length;
     
-    function goToFirstPage() {
-        setCurrentPage(1);
-    }
-
-    function goToPrevPage() {
-        setCurrentPage((prev) => Math.max(1, prev - 1));
-    }
-
-    function goToNextPage() {
-        setCurrentPage((prev) => Math.min(totalPages, prev + 1));
-    }
-
-    function goToLastPage() {
-        setCurrentPage(totalPages);
-    }
-
-    function handleItemsPerPage(n: number) {
-        setItemsPerPage(n);
-        setCurrentPage(1);
-    }
+    function goToFirstPage() { setCurrentPage(1); }
+    function goToPrevPage() { setCurrentPage((prev) => Math.max(1, prev - 1)); }
+    function goToNextPage() { setCurrentPage((prev) => Math.min(totalPages, prev + 1)); }
+    function goToLastPage() { setCurrentPage(totalPages); }
+    function handleItemsPerPage(n: number) { setItemsPerPage(n); setCurrentPage(1); }
 
     function toggleSelect(id: number) {
         setSelected((prev) =>
@@ -65,7 +53,6 @@ export function VehicleTable() {
                 : [...prev, id]
         );
     }
-
     
     function isSelected(id: number) {
         return selected.includes(id);
@@ -81,6 +68,12 @@ export function VehicleTable() {
             setSelected((prev) => [...new Set([...prev, ...pageIds])]);
         }
     }
+
+    const handleVehicleUpdated = (updatedVehicle: any) => {
+        setVehicleList((prev) =>
+            prev.map((v) => (v.id === updatedVehicle.id ? updatedVehicle : v))
+        );
+    };
 
     if (loading) {
         return (
@@ -130,7 +123,6 @@ export function VehicleTable() {
                     <Table className="text-xs">
                         <TableHeader>
                             <TableRow>
-                                <TableHead></TableHead> 
                                 <TableHead>
                                     <Checkbox 
                                         checked={isPageFullySelected}
@@ -155,40 +147,39 @@ export function VehicleTable() {
                                         isSelected(vehicle.id) ? "bg-muted/50 border-l-2 border-l-white" : ""
                                     }`}
                                 >
-                                    <TableCell className="w-20">
-                                        <div
-                                            className="
-                                                absolute right-0 top-1/2 -translate-y-1/2
-                                                hidden group-hover:flex gap-2 z-20 bg-card
-                                            "
-                                        >
+                                    <TableCell className="w-12 relative">
+                                        <Checkbox
+                                        checked={isSelected(vehicle.id)}
+                                        onCheckedChange={() => toggleSelect(vehicle.id)}
+                                        />
+
+                                        {/* Botões flutuantes – agora ficam por cima da célula do checkbox */}
+                                        <div className="
+                                            absolute left-10 top-1/2 -translate-y-1/2 
+                                            hidden group-hover:flex gap-2 z-20 
+                                            bg-card border shadow-md rounded-md px-2 py-1
+                                        ">
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                className="px-2 text-[10px] cursor-pointer rounded-md"
+                                                className="h-7 w-7 p-0"
                                                 onClick={() => {
                                                     setEditingVehicle(vehicle);
                                                     setOpenEditModal(true);
                                                 }}
                                             >
-                                                <Pencil className="w-4 h-4"/>
+                                                <Pencil className="w-3.5 h-3.5"/>
                                             </Button>
 
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                className="px-2 text-[10px] cursor-pointer rounded-md text-destructive"
+                                                className="h-7 w-7 p-0 text-destructive"
                                                 onClick={() => console.log("Deletar", vehicle.id)}
                                             >
-                                                <Trash2 className="w-4 h-4"/>
+                                                <Trash2 className="w-3.5 h-3.5"/>
                                             </Button>
                                         </div>
-                                    </TableCell>
-                                    <TableCell className="w-8">
-                                        <Checkbox
-                                            checked={isSelected(vehicle.id)}
-                                            onCheckedChange={() => toggleSelect(vehicle.id)}
-                                        />
                                     </TableCell>
                                     <TableCell>{vehicle.identificador}</TableCell>
                                     <TableCell>{new Date(vehicle.criado_em).toLocaleDateString("pt-BR")}</TableCell>
@@ -244,11 +235,15 @@ export function VehicleTable() {
                     />
                 </div>
             </div>
-            {openEditModal && (
+            {editingVehicle && (
                 <VehicleModal
                     open={openEditModal}
-                    onClose={() => setOpenEditModal(false)}
+                    onClose={() => {
+                        setOpenEditModal(false);
+                        setEditingVehicle(null);
+                    }}
                     vehicle={editingVehicle}
+                    onVehicleUpdated={handleVehicleUpdated} // ← aqui atualiza a tabela!
                 />
             )}
         </div>
