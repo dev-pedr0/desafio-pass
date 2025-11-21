@@ -18,3 +18,5 @@ Foco em telas maiores. Não necessita de adaptção para celular
 https://case.pass.business/
 
 Deploy: vercel, render, railway
+
+onde mudar route.ts, useVehicleForm,, ImageSection.tsx

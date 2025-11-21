@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-const BASE_URL = "http://localhost:3001";
-//const BASE_URL = "https://desafio-pass-backend.onrender.com";
+//const BASE_URL = "http://localhost:3001";
+const BASE_URL = "https://desafio-pass-backend.onrender.com";
 
 const ESTADOS = [
   { nome: "Acre", uf: "AC" },
