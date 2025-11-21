@@ -14,6 +14,7 @@ model abastecimento_veiculo {
   fornecedor     String?      @db.VarChar(100)
   combustivel_id Int?
   litros         Decimal?     @db.Decimal(10, 2)
+  valor          Decimal?     @db.Decimal(10, 2)
   combustivel    combustivel? @relation(fields: [combustivel_id], references: [id], map: "fk_abastecimento_combustivel")
   veiculo        veiculo      @relation(fields: [veiculo_id], references: [id], onDelete: Cascade, map: "fk_abastecimento_veiculo_veiculo")
 

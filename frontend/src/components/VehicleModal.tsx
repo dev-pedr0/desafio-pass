@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { Aperture, CircleAlert, FileText, ImagePlus, NotebookText, Trash2 } from "lucide-react";
+import { Aperture, CircleAlert, FileText, Fuel, ImagePlus, NotebookText, Trash2, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface VehicleModalProps {
@@ -93,6 +94,9 @@ export function VehicleModal({ open, onClose, vehicle }: VehicleModalProps) {
             combustivel_id: vehicle.combustivel?.id || null,
             descricao: vehicle.descricao ?? "",
             imagem_veiculo: vehicle.imagem_veiculo || [],
+            documento_veiculo: vehicle.documento_veiculo || [],
+            ocorrencia_veiculo: vehicle.ocorrencia_veiculo || [],
+            abastecimento_veiculo: vehicle.abastecimento_veiculo || [],
         });
     }, [vehicle]);
 
@@ -452,6 +456,158 @@ export function VehicleModal({ open, onClose, vehicle }: VehicleModalProps) {
                     <div className="flex gap-1 items-center">
                         <FileText className="w-4 h-4"/>
                         <h3 className="text-base font-semibold">Documentação</h3>
+                    </div>
+
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="text-center">Documento</TableHead>
+                                <TableHead className="text-center">Tipo</TableHead>
+                                <TableHead className="text-center">Vencimento</TableHead>
+                                <TableHead className="text-center">Antecipação</TableHead>
+                                <TableHead className="text-center">Vencimento (Dias)</TableHead>
+                            </TableRow>
+                        </TableHeader>
+
+                        <TableBody>
+                            {form.documento_veiculo?.length > 0 ? (
+                                 form.documento_veiculo.map((doc: any) => (
+                                    <TableRow key={doc.id}>
+                                        <TableCell>{doc.arquivo || "—"}</TableCell>
+                                        <TableCell>{doc.tipo}</TableCell>
+                                        <TableCell>
+                                            {doc.vencimento
+                                                ? new Date(doc.vencimento).toLocaleDateString("pt-BR")
+                                                : "—"}
+                                        </TableCell>
+                                        <TableCell>
+                                            {doc.antecipacao ? "Sim" : "Não"}
+                                        </TableCell>
+                                        <TableCell>
+                                            {doc.dias_para_vencimento ?? "—"}
+                                        </TableCell>
+                                    </TableRow>
+                                 ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center text-muted-foreground italic py-4">
+                                        Nenhum documento cadastrado
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                    
+                    <div className="text-center">
+                        <Button className="mt-3 rounded-full text-base p-5 cursor-pointer" variant="secondary">
+                            Adicionar
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="gap-2 bg-card p-2 rounded-md">
+                    <div className="flex gap-1 items-center">
+                        <TriangleAlert className="w-4 h-4"/>
+                        <h3 className="text-base font-semibold">Ocorrência</h3>
+                    </div>
+
+                    <Table className="table-fixed w-full">
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-1/3 text-center">Data da ocorrência</TableHead>
+                                <TableHead className="w-1/3 text-center">Classificação</TableHead>
+                                <TableHead className="w-1/3 text-center">Seriedade</TableHead>
+                            </TableRow>
+                        </TableHeader>
+
+                        <TableBody>
+                            {form.ocorrencia_veiculo?.length > 0 ? (
+                                 form.ocorrencia_veiculo.map((oc: any) => (
+                                    <TableRow key={oc.id}>
+                                        <TableCell>
+                                            {oc.data
+                                                ? new Date(oc.data).toLocaleDateString("pt-BR")
+                                                : "—"}
+                                        </TableCell>
+                                        <TableCell>
+                                            {oc.tipo_ocorrencia?.nome || "—"}
+                                        </TableCell>
+                                        <TableCell>
+                                            {oc.seriedade_ocorrencia?.nome || "—"}
+                                        </TableCell>
+                                    </TableRow>
+                                 ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center text-muted-foreground italic py-4">
+                                        Nenhum registro cadastrado
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+
+                    <div className="text-center">
+                        <Button className="mt-3 rounded-full text-base p-5 cursor-pointer" variant="secondary">
+                            Adicionar
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="gap-2 bg-card p-2 rounded-md">
+                    <div className="flex gap-1 items-center">
+                        <Fuel className="w-4 h-4"/>
+                        <h3 className="text-base font-semibold">Abastecimento</h3>
+                    </div>
+
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="text-center">Data Abastecimento</TableHead>
+                                <TableHead className="text-center">Fornecedor</TableHead>
+                                <TableHead className="text-center">Combustível</TableHead>
+                                <TableHead className="text-center">Litros</TableHead>
+                                <TableHead className="text-center">Valor</TableHead>
+                            </TableRow>
+                        </TableHeader>
+
+                        <TableBody>
+                            {form.abastecimento_veiculo?.length > 0 ? (
+                                 form.abastecimento_veiculo.map((abs: any) => (
+                                    <TableRow key={abs.id}>
+                                        <TableCell>
+                                            {abs.data
+                                                ? new Date(abs.data).toLocaleDateString("pt-BR")
+                                                : "—"}
+                                        </TableCell>
+                                        <TableCell>
+                                            {abs.fornecedor || "—"}
+                                        </TableCell>
+                                        <TableCell>
+                                            {abs.combustivel?.nome || "—"}
+                                        </TableCell>
+                                        <TableCell>
+                                            {abs.litros}
+                                        </TableCell>
+                                        <TableCell>
+                                            {abs.valor ? `R$ ${Number(abs.valor).toFixed(2)}` : "—"}
+                                        </TableCell>
+                                    </TableRow>
+                                 ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center text-muted-foreground italic py-4">
+                                        Nenhum registro cadastrado
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+
+                    <div className="text-center">
+                        <Button className="mt-3 rounded-full text-base p-5 cursor-pointer" variant="secondary">
+                            Adicionar
+                        </Button>
                     </div>
                 </div>
             </div>
