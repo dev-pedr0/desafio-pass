@@ -7,29 +7,35 @@ import { SearchSection } from "./SearchSection";
 import { tableButtons } from "../data/content";
 import { GenericButtons } from "./GenericButtons";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, CloudDownload, Plus, RotateCw } from "lucide-react";
+import { ChevronDown, CloudDownload, Pencil, Plus, RotateCw, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { PagesButton } from "./PagesButton";
 import { ChangePageButton } from "./ChangePageButton";
 import { Checkbox } from "@/components/ui/checkbox";
+import { VehicleModal } from "./VehicleModal";
 
 export function VehicleTable() {
     const {vehicles, loading } = useVehicles();
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [selected, setSelected] = useState<number[]>([]);
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [editingVehicle, setEditingVehicle] = useState<any>(null);
 
-    const totalPages = Math.ceil(vehicles.length / itemsPerPage);
+    const vehicleList = vehicles ?? [];
+    //console.log("Render do VehicleTable - vehicles:", vehicles);
+
+    const totalPages = Math.ceil(vehicleList.length / itemsPerPage);
 
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedVehicles = vehicles.slice(startIndex, startIndex + itemsPerPage);
+    const paginatedVehicles = vehicleList.slice(startIndex, startIndex + itemsPerPage);
     
     const isPageFullySelected =
         paginatedVehicles.length > 0 &&
         paginatedVehicles.every((vehicle) => selected.includes(vehicle.id));
 
     const selectedCount = selected.length;
-    const totalCount = vehicles.length;
+    const totalCount = vehicleList.length;
     
     function goToFirstPage() {
         setCurrentPage(1);
@@ -124,6 +130,7 @@ export function VehicleTable() {
                     <Table className="text-xs">
                         <TableHeader>
                             <TableRow>
+                                <TableHead></TableHead> 
                                 <TableHead>
                                     <Checkbox 
                                         checked={isPageFullySelected}
@@ -144,8 +151,39 @@ export function VehicleTable() {
                             {paginatedVehicles.map((vehicle) => (
                                 <TableRow 
                                     key={vehicle.id}
-                                    className={isSelected(vehicle.id) ? "bg-muted/50 border-l-2 border-l-white" : ""}
+                                    className={`group relative hover:bg-accent/40 transition ${
+                                        isSelected(vehicle.id) ? "bg-muted/50 border-l-2 border-l-white" : ""
+                                    }`}
                                 >
+                                    <TableCell className="w-20">
+                                        <div
+                                            className="
+                                                absolute right-0 top-1/2 -translate-y-1/2
+                                                hidden group-hover:flex gap-2 z-20 bg-card
+                                            "
+                                        >
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                className="px-2 text-[10px] cursor-pointer rounded-md"
+                                                onClick={() => {
+                                                    setEditingVehicle(vehicle);
+                                                    setOpenEditModal(true);
+                                                }}
+                                            >
+                                                <Pencil className="w-4 h-4"/>
+                                            </Button>
+
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                className="px-2 text-[10px] cursor-pointer rounded-md text-destructive"
+                                                onClick={() => console.log("Deletar", vehicle.id)}
+                                            >
+                                                <Trash2 className="w-4 h-4"/>
+                                            </Button>
+                                        </div>
+                                    </TableCell>
                                     <TableCell className="w-8">
                                         <Checkbox
                                             checked={isSelected(vehicle.id)}
@@ -206,6 +244,13 @@ export function VehicleTable() {
                     />
                 </div>
             </div>
+            {openEditModal && (
+                <VehicleModal
+                    open={openEditModal}
+                    onClose={() => setOpenEditModal(false)}
+                    vehicle={editingVehicle}
+                />
+            )}
         </div>
     );
 }

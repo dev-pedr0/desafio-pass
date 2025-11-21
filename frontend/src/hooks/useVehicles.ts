@@ -21,10 +21,12 @@ export function useVehicles(page = 1, limit = 100) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        console.log("Hook rodando");
         fetch(`/api/veiculos?page=${page}&limit=${limit}`)
         .then((res) => res.json())
         .then((data) => {
-            setVehicles(data);
+            //console.log("Veículos recebidos:", data);
+            setVehicles(Array.isArray(data) ? data : data.data);
             setLoading(false);
         })
         .catch((err) => {

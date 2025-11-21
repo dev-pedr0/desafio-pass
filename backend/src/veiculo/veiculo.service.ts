@@ -3,34 +3,80 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class VeiculoService {
-    constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
-  findAll(page: number, limit: number) {
-    return this.prisma.veiculo.findMany({
-      skip: (page - 1) * limit,
-      take: limit,
-      include: {
-        marca: true,
-        categoria: true,
-        classificacao: true,
-        combustivel: true,
-        companhia: true,
-        tipo_placa: true,
-        usuario: true,
-        abastecimento_veiculo: true,
-        documento_veiculo: true,
-        imagem_veiculo: true,
-        ocorrencia_veiculo: true,
-      },
-      orderBy: {
-        id: 'asc',
-      },
-    });
-  }
+async findAll(page: number, limit: number) {
+        const skip = (page - 1) * limit;
 
-  async listarNomes() {
-    return this.prisma.veiculo.findMany({
-      select: { modelo: true },
-    });
-  }
+        const [data, total] = await Promise.all([
+            this.prisma.veiculo.findMany({
+                skip,
+                take: limit,
+                include: {
+                  marca: true,
+                  categoria: true,
+                  classificacao: true,
+                  combustivel: true,
+                  companhia: true,
+                  tipo_placa: true,
+                  usuario: true,
+                  abastecimento_veiculo: true,
+                  documento_veiculo: true,
+                  imagem_veiculo: true,
+                  ocorrencia_veiculo: true,
+                },
+            }),
+            this.prisma.veiculo.count(),
+        ]);
+
+        return {
+            data,
+            total,
+            page,
+            lastPage: Math.ceil(total / limit),
+        };
+    }
+
+    getCompanhias() {
+        return this.prisma.companhia.findMany({
+            orderBy: { nome: 'asc' }
+        });
+    }
+
+    getMarcas() {
+        return this.prisma.marca.findMany({
+            orderBy: { nome: 'asc' }
+        });
+    }
+
+    getCategorias() {
+        return this.prisma.categoria.findMany({
+            orderBy: { nome: 'asc' }
+        });
+    }
+
+    getClassificacoes() {
+        return this.prisma.classificacao.findMany({
+            orderBy: { nome: 'asc' }
+        });
+    }
+
+    getCombustiveis() {
+        return this.prisma.combustivel.findMany({
+            orderBy: { nome: 'asc' }
+        });
+    }
+
+    getTiposPlaca() {
+        return this.prisma.tipo_placa.findMany({
+            orderBy: { nome: 'asc' }
+        });
+    }
+
+    async updateVehicle(id: number, data: any) {
+        return this.prisma.veiculo.update({
+            where: { id },
+            data,
+        });
+    }
 }
