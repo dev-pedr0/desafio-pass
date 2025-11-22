@@ -195,7 +195,7 @@ export function DocumentFormModal({ veiculoId, open, onClose, onDocumentAdded }:
                     <Button variant="outline" onClick={onClose} disabled={isSaving} className="cursor-pointer">
                         Cancelar
                     </Button>
-                    <Button onClick={handleSave} disabled={isSaving} className="cursor-pointer">
+                    <Button onClick={handleSave} disabled={isSaving}>
                         {isSaving ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
