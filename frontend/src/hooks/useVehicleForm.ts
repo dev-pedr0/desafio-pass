@@ -1,7 +1,8 @@
+import { SERVER_URL } from "@/url";
 import { useEffect, useState } from "react";
 
-//const BASE_URL = "http://localhost:3001";
-const BASE_URL = "https://desafio-pass-backend.onrender.com";
+
+const BASE_URL = SERVER_URL;
 
 const ESTADOS = [
   { nome: "Acre", uf: "AC" },
@@ -121,11 +122,35 @@ export function useVehicleForm(vehicle: any) {
 
     const refreshImages = async () => {
         if (!form.id) return;
-        const res = await fetch(`${BASE_URL}/veiculo?page=1&limit=1&id=${form.id}`);
-        const json = await res.json();
-        const newVehicle = json.data?.find((v: any) => v.id === form.id);
-        if (newVehicle) {
-        setForm((prev: any) => ({ ...prev, imagem_veiculo: newVehicle.imagem_veiculo }));
+        try {
+            const res = await fetch(`${BASE_URL}/veiculo/${form.id}`);
+            if (!res.ok) throw new Error("Falha ao buscar veículo atualizado");
+            const newVehicle = await res.json();
+            if (newVehicle?.imagem_veiculo) {
+                setForm((prev: any) => ({ ...prev, imagem_veiculo: newVehicle.imagem_veiculo }));
+            }
+        } catch (error) {
+            console.error("Erro no refreshImages:", error);
+        }
+    };
+
+    const refreshVehicleData = async () => {
+        if (!form.id) return;
+        try {
+            const res = await fetch(`${BASE_URL}/veiculo/${form.id}`);
+            if (!res.ok) throw new Error("Falha ao recarregar veículo");
+            const freshVehicle = await res.json();
+
+            setForm((prev: any) => ({
+                ...prev,
+                imagem_veiculo: freshVehicle.imagem_veiculo || [],
+                documento_veiculo: freshVehicle.documento_veiculo || [],
+                ocorrencia_veiculo: freshVehicle.ocorrencia_veiculo || [],
+                abastecimento_veiculo: freshVehicle.abastecimento_veiculo || [],
+                // se quiser atualizar mais campos (status, modelo, etc), pode colocar aqui também
+            }));
+        } catch (error) {
+            console.error("Erro ao recarregar dados do veículo:", error);
         }
     };
 
@@ -140,5 +165,6 @@ export function useVehicleForm(vehicle: any) {
         combustiveis,
         tiposPlaca,
         BASE_URL,
+        refreshVehicleData,
   };
 }

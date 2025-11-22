@@ -2,12 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { useVehicleForm } from "@/src/hooks/useVehicleForm";
-import { GeneralDataSection } from "./sections/GeneralDataSection";
-import { ImagesSection } from "./sections/Image.Section";
-import { DescriptionSection } from "./sections/DescriptionSection";
-import { DocumentsSection } from "./sections/DocumentsSection";
-import { OccurrencesSection } from "./sections/OccurrencesSection";
-import { FuelSection } from "./sections/FuelSection";
+import { GeneralDataSection } from "./vehicleSections/GeneralDataSection";
+import { ImagesSection } from "./vehicleSections/ImageSection";
+import { DescriptionSection } from "./vehicleSections/DescriptionSection";
+import { DocumentsSection } from "./vehicleSections/DocumentsSection";
+import { OccurrencesSection } from "./vehicleSections/OccurrencesSection";
+import { FuelSection } from "./vehicleSections/FuelSection";
 import { useState } from "react";
 
 interface VehicleModalProps {
@@ -29,6 +29,7 @@ export function VehicleModal({ open, onClose, vehicle, onVehicleUpdated }: Vehic
         combustiveis,
         tiposPlaca,
         BASE_URL,
+        refreshVehicleData,
     } = useVehicleForm(vehicle);
 
     const [isSaving, setIsSaving] = useState(false);
@@ -119,7 +120,11 @@ export function VehicleModal({ open, onClose, vehicle, onVehicleUpdated }: Vehic
 
         <ImagesSection form={form} refreshImages={refreshImages} />
 
-        <DocumentsSection documentos={form.documento_veiculo} />
+        <DocumentsSection
+          veiculoId={form.id}
+          onDocumentAdded={refreshVehicleData}
+          documentos={form.documento_veiculo || []}
+          />
 
         <OccurrencesSection ocorrencias={form.ocorrencia_veiculo} />
 

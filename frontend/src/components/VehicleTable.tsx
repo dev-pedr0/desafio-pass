@@ -162,7 +162,7 @@ export function VehicleTable() {
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                className="h-7 w-7 p-0"
+                                                className="cursor-pointer h-7 w-7 p-0"
                                                 onClick={() => {
                                                     setEditingVehicle(vehicle);
                                                     setOpenEditModal(true);
@@ -174,7 +174,7 @@ export function VehicleTable() {
                                             <Button
                                                 size="sm"
                                                 variant="ghost"
-                                                className="h-7 w-7 p-0 text-destructive"
+                                                className="cursor-pointer h-7 w-7 p-0 text-destructive"
                                                 onClick={() => console.log("Deletar", vehicle.id)}
                                             >
                                                 <Trash2 className="w-3.5 h-3.5"/>

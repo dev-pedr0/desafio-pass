@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { VeiculoService } from './veiculo.service';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 
@@ -46,6 +46,11 @@ export class VeiculoController {
         return this.veiculoService.getTiposPlaca();
     }
 
+    @Get(':id')
+    findOne(@Param('id') id: string) {
+        return this.veiculoService.findOne(Number(id));
+    }
+
     @Put(':id')
     updateVehicle(
         @Param('id') id: string,
@@ -76,5 +81,26 @@ export class VeiculoController {
     @Delete(':id/imagens')
         deleteAllImages(@Param('id') id: string) {
         return this.veiculoService.deleteAllImages(Number(id));
+    }
+
+    @Post(':id/documentos')
+    @UseInterceptors(
+        FileInterceptor('arquivo', {
+            storage: diskStorage({
+                destination: './uploads/documentos',
+                filename: (_, file, cb) => {
+                    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                    const ext = extname(file.originalname);
+                    cb(null, unique + ext);
+                },
+            }),
+        })
+    )
+    uploadDocument(
+        @Param('id', ParseIntPipe) id: number,
+        @UploadedFile() file: Express.Multer.File,
+        @Body() data: any,
+    ) {
+        return this.veiculoService.uploadDocument(Number(id), file, data);
     }
 }

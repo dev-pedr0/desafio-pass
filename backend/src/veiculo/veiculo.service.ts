@@ -5,7 +5,26 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class VeiculoService {
   constructor(private prisma: PrismaService) {}
 
-async findAll(page: number, limit: number) {
+    async findOne(id: number) {
+        return this.prisma.veiculo.findUnique({
+            where: { id },
+            include: {
+                marca: true,
+                categoria: true,
+                classificacao: true,
+                combustivel: true,
+                companhia: true,
+                tipo_placa: true,
+                usuario: true,
+                abastecimento_veiculo: true,
+                documento_veiculo: true,
+                imagem_veiculo: true,
+                ocorrencia_veiculo: true,
+            },
+        });
+    }
+
+    async findAll(page: number, limit: number) {
         const skip = (page - 1) * limit;
 
         const [data, total] = await Promise.all([
@@ -35,6 +54,28 @@ async findAll(page: number, limit: number) {
             page,
             lastPage: Math.ceil(total / limit),
         };
+    }
+
+    async uploadDocument(veiculoId: number, file: Express.Multer.File, data: any) {
+        const arquivoUrl = `/uploads/documentos/${file.filename}`;
+        const vencimento = data.vencimento ? new Date(data.vencimento) : null;
+        const antecipacao = data.antecipacao === 'true';
+        const dias_para_vencimento = data.dias_para_vencimento ? parseInt(data.dias_para_vencimento) : null;
+
+        return this.prisma.documento_veiculo.create({
+            data: {
+                tipo: data.tipo,
+                arquivo: arquivoUrl, // Salva o caminho para ser acessado pelo frontend
+                vencimento: vencimento,
+                antecipacao: antecipacao,
+                dias_para_vencimento: dias_para_vencimento,
+                veiculo: {
+                    connect: {
+                        id:veiculoId,
+                    }
+                }
+            },
+        });
     }
 
     getCompanhias() {
@@ -95,7 +136,7 @@ async findAll(page: number, limit: number) {
         }
 
         return imagensCriadas;
-        }
+    }
 
     async deleteAllImages(veiculoId: number) {
         await this.prisma.imagem_veiculo.deleteMany({

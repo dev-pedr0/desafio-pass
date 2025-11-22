@@ -1,7 +1,7 @@
+import { SERVER_URL } from "@/url";
 import { Aperture, Trash2 } from "lucide-react";
 
-//const BASE_URL = "http://localhost:3001";
-const BASE_URL = "https://desafio-pass-backend.onrender.com";
+const BASE_URL = SERVER_URL;
 
 interface ImagesSectionProps {
   form: any;
@@ -81,7 +81,7 @@ export function ImagesSection({ form, refreshImages }: ImagesSectionProps) {
       {form.imagem_veiculo?.length > 0 && (
         <button
           onClick={handleDeleteAll}
-          className="flex items-center gap-2 text-sm text-red-600 hover:text-red-700 hover:underline self-start"
+          className="cursor-pointer flex items-center gap-2 text-sm text-red-600 hover:text-red-700 hover:underline self-start"
         >
           <Trash2 className="w-4 h-4" />
           Excluir todas as imagens

@@ -1,12 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { FileText } from "lucide-react";
+import { useState } from "react";
+import { DocumentFormModal } from "../DocumentModal";
 
 interface DocumentsSectionProps {
   documentos: any[];
+  veiculoId: number;
+  onDocumentAdded: () => Promise<void>;
 }
 
-export function DocumentsSection({ documentos }: DocumentsSectionProps) {
+export function DocumentsSection({ documentos, veiculoId, onDocumentAdded }: DocumentsSectionProps) {
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  
+  const handleOpenModal = () => setIsFormModalOpen(true);
+  const handleCloseModal = () => setIsFormModalOpen(false);
+
   return (
     <div className="flex flex-col gap-4 bg-card p-4 rounded-md">
       <div className="flex items-center gap-2">
@@ -54,10 +63,20 @@ export function DocumentsSection({ documentos }: DocumentsSectionProps) {
       </Table>
 
       <div className="flex justify-center">
-        <Button variant="secondary" className="rounded-full px-8">
-          + Adicionar Documento
+        <Button variant="secondary" className="cursor-pointer rounded-full px-8" onClick={handleOpenModal}>
+          Adicionar
         </Button>
       </div>
+
+      <DocumentFormModal
+        veiculoId={veiculoId}
+        open={isFormModalOpen}
+        onClose={handleCloseModal}
+        onDocumentAdded={async () => {
+          await onDocumentAdded();
+          setIsFormModalOpen(false);
+        }}
+      />
     </div>
   );
 }
