@@ -120,19 +120,19 @@ export function useVehicleForm(vehicle: any) {
         });
     }
 
-    const refreshImages = async () => {
-        if (!form.id) return;
-        try {
-            const res = await fetch(`${BASE_URL}/veiculo/${form.id}`);
-            if (!res.ok) throw new Error("Falha ao buscar veículo atualizado");
-            const newVehicle = await res.json();
-            if (newVehicle?.imagem_veiculo) {
-                setForm((prev: any) => ({ ...prev, imagem_veiculo: newVehicle.imagem_veiculo }));
-            }
-        } catch (error) {
-            console.error("Erro no refreshImages:", error);
-        }
-    };
+    // const refreshImages = async () => {
+    //     if (!form.id) return;
+    //     try {
+    //         const res = await fetch(`${BASE_URL}/veiculo/${form.id}`);
+    //         if (!res.ok) throw new Error("Falha ao buscar veículo atualizado");
+    //         const newVehicle = await res.json();
+    //         if (newVehicle?.imagem_veiculo) {
+    //             setForm((prev: any) => ({ ...prev, imagem_veiculo: newVehicle.imagem_veiculo }));
+    //         }
+    //     } catch (error) {
+    //         console.error("Erro no refreshImages:", error);
+    //     }
+    // };
 
     const refreshVehicleData = async () => {
         if (!form.id) return;
@@ -147,7 +147,6 @@ export function useVehicleForm(vehicle: any) {
                 documento_veiculo: freshVehicle.documento_veiculo || [],
                 ocorrencia_veiculo: freshVehicle.ocorrencia_veiculo || [],
                 abastecimento_veiculo: freshVehicle.abastecimento_veiculo || [],
-                // se quiser atualizar mais campos (status, modelo, etc), pode colocar aqui também
             }));
         } catch (error) {
             console.error("Erro ao recarregar dados do veículo:", error);
@@ -157,7 +156,7 @@ export function useVehicleForm(vehicle: any) {
     return {
         form,
         handleChange,
-        refreshImages,
+        //refreshImages,
         marcas,
         companhias,
         categorias,
@@ -165,6 +164,8 @@ export function useVehicleForm(vehicle: any) {
         combustiveis,
         tiposPlaca,
         BASE_URL,
-        refreshVehicleData,
+        refreshImages: refreshVehicleData,
+        refreshDocuments: refreshVehicleData,
+        refreshOccurrences: refreshVehicleData,
   };
 }

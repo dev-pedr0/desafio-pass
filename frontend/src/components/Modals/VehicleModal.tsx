@@ -29,7 +29,8 @@ export function VehicleModal({ open, onClose, vehicle, onVehicleUpdated }: Vehic
         combustiveis,
         tiposPlaca,
         BASE_URL,
-        refreshVehicleData,
+        refreshDocuments,
+        refreshOccurrences,
     } = useVehicleForm(vehicle);
 
     const [isSaving, setIsSaving] = useState(false);
@@ -122,11 +123,15 @@ export function VehicleModal({ open, onClose, vehicle, onVehicleUpdated }: Vehic
 
         <DocumentsSection
           veiculoId={form.id}
-          onDocumentAdded={refreshVehicleData}
+          onDocumentAdded={refreshDocuments}
           documentos={form.documento_veiculo || []}
           />
 
-        <OccurrencesSection ocorrencias={form.ocorrencia_veiculo} />
+        <OccurrencesSection 
+          ocorrencias={form.ocorrencia_veiculo}
+          veiculoId={form.id} 
+          onOccurrenceAdded={refreshOccurrences}
+          />
 
         <FuelSection abastecimentos={form.abastecimento_veiculo} />
       </div>

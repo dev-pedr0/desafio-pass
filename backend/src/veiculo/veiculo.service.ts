@@ -19,7 +19,12 @@ export class VeiculoService {
                 abastecimento_veiculo: true,
                 documento_veiculo: true,
                 imagem_veiculo: true,
-                ocorrencia_veiculo: true,
+                ocorrencia_veiculo: {
+                    include: {
+                        tipo_ocorrencia: true,
+                        seriedade_ocorrencia: true,
+                    },
+                },
             },
         });
     }
@@ -144,5 +149,42 @@ export class VeiculoService {
         });
 
         return { success: true };
+    }
+
+    async createOccurrence(veiculoId: number, file: Express.Multer.File | undefined, data: any) {
+        const anexoUrl = file ? `/uploads/ocorrencias/${file.filename}` : null;
+
+        return this.prisma.ocorrencia_veiculo.create({
+            data: {
+            veiculo: { connect: { id: veiculoId } },
+            data: data.data ? new Date(data.data) : null,
+            descricao: data.descricao || null,
+            anexo: anexoUrl,
+            tipo_ocorrencia: data.classificacao_id
+                ? { connect: { id: Number(data.classificacao_id) } }
+                : undefined,
+            seriedade_ocorrencia: data.seriedade_id
+                ? { connect: { id: Number(data.seriedade_id) } }
+                : undefined,
+            },
+            include: {
+            tipo_ocorrencia: true,
+            seriedade_ocorrencia: true,
+            },
+        });
+    }
+
+    async getTiposOcorrencia() {
+        return this.prisma.tipo_ocorrencia.findMany({
+            select: { id: true, nome: true },
+            orderBy: { nome: 'asc' },
+        });
+    }
+
+    async getSeriedadesOcorrencia() {
+        return this.prisma.seriedade_ocorrencia.findMany({
+            select: { id: true, nome: true },
+            orderBy: { nome: 'asc' },
+        });
     }
 }

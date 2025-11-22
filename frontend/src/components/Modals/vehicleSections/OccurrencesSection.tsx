@@ -1,12 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TriangleAlert } from "lucide-react";
+import { OccurrenceFormModal } from "../OccurenceModal";
+import { useState } from "react";
 
 interface OccurrencesSectionProps {
   ocorrencias: any[];
+  veiculoId: number;
+  onOccurrenceAdded: () => Promise<void>;
 }
 
-export function OccurrencesSection({ ocorrencias }: OccurrencesSectionProps) {
+export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAdded }: OccurrencesSectionProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="flex flex-col gap-4 bg-card p-4 rounded-md">
       <div className="flex items-center gap-2">
@@ -58,10 +64,20 @@ export function OccurrencesSection({ ocorrencias }: OccurrencesSectionProps) {
       </Table>
 
       <div className="flex justify-center">
-        <Button variant="secondary" className="rounded-full px-8">
+        <Button variant="secondary" className="cursor-pointer rounded-full px-8" onClick={() => setIsModalOpen(true)}>
           Adicionar
         </Button>
       </div>
+
+      <OccurrenceFormModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        veiculoId={veiculoId}
+        onOccurrenceAdded={async () => {
+          await onOccurrenceAdded();
+          setIsModalOpen(false);
+        }}
+      />
     </div>
   );
 }
