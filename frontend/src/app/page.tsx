@@ -14,8 +14,8 @@ export default function Home() {
     <div className="bg-card flex h-dvh w-dvw">
       <div
         className={`
-          flex flex-col my-2 mx-2 transition-all duration-300 ease-in-out
-          ${isCollapsed ? "w-10" : "w-68"} ${isCollapsed ? "gap-3" : "gap-5"}
+          hidden lg:flex flex-col my-2 mx-2 transition-all duration-300 ease-in-out
+          ${isCollapsed ? "w-10" : "w-68"} ${isCollapsed ? "gap-3" : "gap-8"}
         `}
       >
         <SideMenuTop/>

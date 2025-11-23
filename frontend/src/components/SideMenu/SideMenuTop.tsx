@@ -6,11 +6,17 @@ import { companySection } from "../../data/content";
 import { useState } from "react";
 import { useSidebar } from "../../context/SideBarContext";
 
-export function SideMenuTop() {
+interface SideMenuTopProps {
+  forceExpanded?: boolean;
+}
+
+export function SideMenuTop({ forceExpanded = false }: SideMenuTopProps) {
     const { isCollapsed } = useSidebar();
     const [selectedCompany, setSelectedCompany] = useState(companySection[0]);
     
-    if (isCollapsed) {
+    const shouldCollapse = forceExpanded ? false : isCollapsed;
+
+    if (shouldCollapse) {
         return (
             <Popover>
                 <PopoverTrigger className="w-full p-3 pl-1 pb-1 flex justify-start border-b">

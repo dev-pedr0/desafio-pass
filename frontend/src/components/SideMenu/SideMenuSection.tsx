@@ -14,13 +14,16 @@ interface MenuItem {
 type Props = {
   title: string;
   items: MenuItem[];
+  forceExpanded?: boolean;
 }
 
-export function SideMenuSection({ title, items }: Props) {
+export function SideMenuSection({ title, items, forceExpanded = false }: Props) {
     const pathname = usePathname();
     const { isCollapsed } = useSidebar();
+
+    const shouldCollapse = forceExpanded ? false : isCollapsed;
     
-    if (isCollapsed) {
+    if (shouldCollapse) {
         return (
             <TooltipProvider>
                 <div className="flex flex-col items-center">
