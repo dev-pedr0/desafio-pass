@@ -5,7 +5,7 @@ import { LanguageSelector } from "./LanguageSelector";
 import { AppsSection } from "./AppsSection";
 import { UserSection } from "./UserSection";
 import { useSidebar } from "../context/SideBarContext";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { SideMenuTop } from "./SideMenu/SideMenuTop";
 import { menuSection } from "../data/content";
 import { SideMenuSection } from "./SideMenu/SideMenuSection";
@@ -25,6 +25,7 @@ export function CardTop() {
                     side="left"
                     className="w-68 p-0 bg-card border-r-0 [&>button:first-of-type]:hidden"
                 >
+                    <SheetTitle className="hidden">Navegação do sistema</SheetTitle>
                     <div className="flex flex-col gap-5 my-2 mx-2">
                         <SideMenuTop forceExpanded />
                             {menuSection.map((section, index) => (
