@@ -120,24 +120,10 @@ export function useVehicleForm(vehicle: any) {
         });
     }
 
-    // const refreshImages = async () => {
-    //     if (!form.id) return;
-    //     try {
-    //         const res = await fetch(`${BASE_URL}/veiculo/${form.id}`);
-    //         if (!res.ok) throw new Error("Falha ao buscar veículo atualizado");
-    //         const newVehicle = await res.json();
-    //         if (newVehicle?.imagem_veiculo) {
-    //             setForm((prev: any) => ({ ...prev, imagem_veiculo: newVehicle.imagem_veiculo }));
-    //         }
-    //     } catch (error) {
-    //         console.error("Erro no refreshImages:", error);
-    //     }
-    // };
-
     const refreshVehicleData = async () => {
-        if (!form.id) return;
+        if (!vehicle?.id) return;
         try {
-            const res = await fetch(`${BASE_URL}/veiculo/${form.id}`);
+            const res = await fetch(`${BASE_URL}/veiculo/${vehicle.id}`);
             if (!res.ok) throw new Error("Falha ao recarregar veículo");
             const freshVehicle = await res.json();
 
@@ -167,5 +153,6 @@ export function useVehicleForm(vehicle: any) {
         refreshImages: refreshVehicleData,
         refreshDocuments: refreshVehicleData,
         refreshOccurrences: refreshVehicleData,
+        refreshFuel: refreshVehicleData,
   };
 }

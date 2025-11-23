@@ -16,7 +16,6 @@ export class VeiculoService {
                 companhia: true,
                 tipo_placa: true,
                 usuario: true,
-                abastecimento_veiculo: true,
                 documento_veiculo: true,
                 imagem_veiculo: true,
                 ocorrencia_veiculo: {
@@ -24,6 +23,12 @@ export class VeiculoService {
                         tipo_ocorrencia: true,
                         seriedade_ocorrencia: true,
                     },
+                },
+                abastecimento_veiculo: {
+                    include: {
+                    combustivel: true,
+                    },
+                    orderBy: { data: 'desc' },
                 },
             },
         });
@@ -185,6 +190,24 @@ export class VeiculoService {
         return this.prisma.seriedade_ocorrencia.findMany({
             select: { id: true, nome: true },
             orderBy: { nome: 'asc' },
+        });
+    }
+
+    async createAbastecimento(veiculoId: number, data: any) {
+        return this.prisma.abastecimento_veiculo.create({
+            data: {
+            veiculo: { connect: { id: veiculoId } },
+            data: data.data ? new Date(data.data) : null,
+            fornecedor: data.fornecedor || null,
+            combustivel: data.combustivel_id
+                ? { connect: { id: Number(data.combustivel_id) } }
+                : undefined,
+            litros: data.litros ? parseFloat(data.litros) : null,
+            valor: data.valor ? parseFloat(data.valor) : null,
+            },
+            include: {
+            combustivel: true,
+            },
         });
     }
 }

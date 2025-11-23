@@ -111,7 +111,7 @@ export function OccurrenceFormModal({
             </div>
 
             <div className="space-y-2">
-                <Label>Tipo de Ocorrência <span className="text-red-500">*</span></Label>
+                <Label>Tipo de Ocorrência <span className="text-chart-5">*</span></Label>
                 <Select value={form.classificacao_id} onValueChange={v => setForm(prev => ({ ...prev, classificacao_id: v }))}>
                     <SelectTrigger>
                         <SelectValue placeholder="Selecione o tipo"/>
@@ -125,7 +125,7 @@ export function OccurrenceFormModal({
             </div>
 
             <div className="space-y-2">
-                <Label>Seriedade <span className="text-red-500">*</span></Label>
+                <Label>Seriedade <span className="text-chart-5">*</span></Label>
                 <Select value={form.seriedade_id} onValueChange={v => setForm(prev => ({ ...prev, seriedade_id: v }))}>
                     <SelectTrigger>
                         <SelectValue placeholder="Selecione a seriedade"/>

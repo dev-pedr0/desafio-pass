@@ -42,10 +42,10 @@ export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAd
                   <span
                     className={`inline-block px-2 py-1 text-xs rounded-full ${
                       oc.seriedade_ocorrencia?.nome === "Alta"
-                        ? "bg-red-100 text-red-800"
+                        ? "bg-red-100 text-chart-5"
                         : oc.seriedade_ocorrencia?.nome === "Média"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-green-100 text-green-800"
+                        ? "bg-yellow-100 text-chart-3"
+                        : "bg-green-100 text-chart-2"
                     }`}
                   >
                     {oc.seriedade_ocorrencia?.nome || "—"}

@@ -141,4 +141,13 @@ export class VeiculoController {
     ) {
         return this.veiculoService.createOccurrence(veiculoId, file, data);                         
     }
+
+    @Post(':id/abastecimentos')
+    async createAbastecimento(
+        @Param('id', ParseIntPipe) veiculoId: number,
+        @Body() data: any,
+    ) {
+        return this.veiculoService.createAbastecimento(veiculoId, data);
+    }
+
 }
