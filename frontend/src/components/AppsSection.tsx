@@ -26,7 +26,7 @@ export function AppsSection() {
                             <PopoverContent className="w-auto">
                                 <div className="grid grid-cols-3 gap-4 p-2">
                                     {passApss.map((app, index) => (
-                                        <div className="hover:bg-sidebar-accent hover:rounded-md p-2">
+                                        <div key={index} className="hover:bg-sidebar-accent hover:rounded-md p-2">
                                             <a href="/" className="flex flex-col justify-center items-center gap-2">
                                                 <img alt={app.name} src={app.image} className="w-10 h-10"/>
                                                 <span className="text-xs">{app.name}</span>

@@ -23,7 +23,7 @@ export function UserSection() {
                     <div>
                         <Popover>
                             <PopoverTrigger>
-                                <span className="text-foreground text-sm cursor-pointer">{initials}</span>
+                                <span className="text-sm cursor-pointer text-white">{initials}</span>
                             </PopoverTrigger>
 
                             <PopoverContent className="w-60 p-0 m-0">

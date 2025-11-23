@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useVehicles } from "../hooks/useVehicles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { SearchSection } from "./SearchSection";
-import { tableButtons } from "../data/content";
+import { cardMenu, tableButtons } from "../data/content";
 import { GenericButtons } from "./GenericButtons";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, CloudDownload, Pencil, Plus, RotateCw, Trash2 } from "lucide-react";
@@ -96,7 +96,7 @@ export function VehicleTable() {
                             className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
                             >
                             <RotateCw className="h-4 w-4"/>
-                            <span className="text-md">Atualizar</span>
+                            <span className="text-md">{cardMenu[0].name}</span>
                         </Button>
                         <Button 
                             size="sm" 
@@ -104,7 +104,7 @@ export function VehicleTable() {
                             className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
                             >
                             <CloudDownload className="h-4 w-4"/>
-                            <span className="text-md">Export</span>
+                            <span className="text-md">{cardMenu[1].name}</span>
                             <div className="w-px h-full bg-border"></div>
                             <ChevronDown className="h-4 w-4"/>
                         </Button>
@@ -115,7 +115,7 @@ export function VehicleTable() {
                             className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
                             >
                             <Plus className="h-4 w-4"/>
-                            <span className="text-md">Adicionar</span>
+                            <span className="text-md">{cardMenu[2   ].name}</span>
                         </Button>
                     </div>
                 </div>

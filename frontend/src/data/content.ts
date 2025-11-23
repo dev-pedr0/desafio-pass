@@ -105,3 +105,9 @@ export const tableButtons = [
         label: "Status",
     },
 ];
+
+export const cardMenu = [
+  { name: "Atualizar" },
+  { name: "Exportar" },
+  { name: "Adicionar" },
+];

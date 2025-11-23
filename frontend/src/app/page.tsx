@@ -1,23 +1,23 @@
-// async function getVeiculos() {
-//   const res = await fetch("https://desafio-pass-backend.onrender.com/veiculo/nomes", {
-//     cache: "no-store"
-//   });
-//   return res.json();
-// }
-
 "use client";
 
 import { CardTop } from "../components/CardTop";
-import { SideMenuSection } from "../components/SideMenuSection";
-import { SideMenuTop } from "../components/SideMenuTop";
+import { SideMenuSection } from "../components/SideMenu/SideMenuSection";
+import { SideMenuTop } from "../components/SideMenu/SideMenuTop";
 import { VehicleTable } from "../components/VehicleTable";
+import { useSidebar } from "../context/SideBarContext";
 import { menuSection } from "../data/content";
 
 export default function Home() {
+  const { isCollapsed } = useSidebar();
   
   return (
     <div className="bg-card flex h-dvh w-dvw">
-      <div className="w-68 flex flex-col items-baseline my-2 mx-2 gap-5">
+      <div
+        className={`
+          flex flex-col my-2 mx-2 transition-all duration-300 ease-in-out
+          ${isCollapsed ? "w-10" : "w-68"} ${isCollapsed ? "gap-3" : "gap-5"}
+        `}
+      >
         <SideMenuTop/>
         {menuSection.map((section, index) => (
           <SideMenuSection key={index} title={section.title} items={section.items}/>
