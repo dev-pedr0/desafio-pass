@@ -1,14 +1,14 @@
 import { PanelLeft } from "lucide-react";
 import { ThemeToggleButton } from "./ThemeToggleButton";
-import { SearchSection } from "./SearchSection";
+import { SearchSection } from "../SearchSection";
 import { LanguageSelector } from "./LanguageSelector";
 import { AppsSection } from "./AppsSection";
 import { UserSection } from "./UserSection";
-import { useSidebar } from "../context/SideBarContext";
+import { useSidebar } from "../../context/SideBarContext";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { SideMenuTop } from "./SideMenu/SideMenuTop";
-import { menuSection } from "../data/content";
-import { SideMenuSection } from "./SideMenu/SideMenuSection";
+import { SideMenuTop } from "../SideMenu/SideMenuTop";
+import { menuSection } from "../../data/content";
+import { SideMenuSection } from "../SideMenu/SideMenuSection";
 
 export function CardTop() {
     const { toggleSidebar, isCollapsed } = useSidebar();

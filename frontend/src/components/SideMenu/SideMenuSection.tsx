@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../../context/SideBarContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/Tooltip";
+import { useLocale } from "@/src/context/LocaleContext";
 
 interface MenuItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -20,6 +21,7 @@ type Props = {
 export function SideMenuSection({ title, items, forceExpanded = false }: Props) {
     const pathname = usePathname();
     const { isCollapsed } = useSidebar();
+    const { t } = useLocale();
 
     const shouldCollapse = forceExpanded ? false : isCollapsed;
     
@@ -46,7 +48,7 @@ export function SideMenuSection({ title, items, forceExpanded = false }: Props) 
                                 </Link>
                             </TooltipTrigger>
                             <TooltipContent side="right" className="bg-foreground text-background">
-                                <p className="font-medium">{item.label}</p>
+                                <p className="font-medium">{t(item.label)}</p>
                             </TooltipContent>
                         </Tooltip>
                         );
@@ -59,7 +61,7 @@ export function SideMenuSection({ title, items, forceExpanded = false }: Props) 
     return (
         <div className="text-muted-foreground font-medium w-full">
             <h3 className="text-xs">
-                {title}
+                {t(title)}
             </h3>
 
             <ul>
@@ -79,7 +81,7 @@ export function SideMenuSection({ title, items, forceExpanded = false }: Props) 
                                 >
                                 <Icon className="h-4 w-4" />
                                 <span>
-                                    {item.label}
+                                    {t(item.label)}
                                 </span>
                             </Link>
                         </li>

@@ -13,6 +13,7 @@ import { PagesButton } from "./PagesButton";
 import { ChangePageButton } from "./ChangePageButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { VehicleModal } from "./Modals/VehicleModal";
+import { useLocale } from "../context/LocaleContext";
 
 export function VehicleTable() {
     const { vehicles, loading } = useVehicles();
@@ -22,6 +23,8 @@ export function VehicleTable() {
     const [openEditModal, setOpenEditModal] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState<any>(null);
     const [vehicleList, setVehicleList] = useState<any[]>([]);
+
+    const { t } = useLocale();
 
     useEffect(() => {
         if (vehicles) {
@@ -96,7 +99,7 @@ export function VehicleTable() {
                             className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
                             >
                             <RotateCw className="h-4 w-4"/>
-                            <span className="text-md">{cardMenu[0].name}</span>
+                            <span className="text-md">{t(cardMenu[0].name)}</span>
                         </Button>
                         <Button 
                             size="sm" 
@@ -104,7 +107,7 @@ export function VehicleTable() {
                             className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
                             >
                             <CloudDownload className="h-4 w-4"/>
-                            <span className="text-md">{cardMenu[1].name}</span>
+                            <span className="text-md">{t(cardMenu[1].name)}</span>
                             <div className="w-px h-full bg-border"></div>
                             <ChevronDown className="h-4 w-4"/>
                         </Button>
@@ -115,7 +118,7 @@ export function VehicleTable() {
                             className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
                             >
                             <Plus className="h-4 w-4"/>
-                            <span className="text-md">{cardMenu[2   ].name}</span>
+                            <span className="text-md">{t(cardMenu[2].name)}</span>
                         </Button>
                     </div>
                 </div>

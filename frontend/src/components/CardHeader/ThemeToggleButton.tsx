@@ -1,8 +1,8 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "./theme-provider";
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "./ui/Tooltip";
+import { useTheme } from "../theme-provider";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "../ui/Tooltip";
 import { useState } from "react";
 
 

@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Grip } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
-import { passApss } from "../data/content";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/Tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
+import { passApss } from "../../data/content";
 
 export function AppsSection() {
     return (

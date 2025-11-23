@@ -5,6 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { companySection } from "../../data/content";
 import { useState } from "react";
 import { useSidebar } from "../../context/SideBarContext";
+import { useLocale } from "@/src/context/LocaleContext";
 
 interface SideMenuTopProps {
   forceExpanded?: boolean;
@@ -12,6 +13,7 @@ interface SideMenuTopProps {
 
 export function SideMenuTop({ forceExpanded = false }: SideMenuTopProps) {
     const { isCollapsed } = useSidebar();
+    const { t } = useLocale();
     const [selectedCompany, setSelectedCompany] = useState(companySection[0]);
     
     const shouldCollapse = forceExpanded ? false : isCollapsed;
@@ -25,31 +27,33 @@ export function SideMenuTop({ forceExpanded = false }: SideMenuTopProps) {
                     </div>
                 </PopoverTrigger>
                 <PopoverContent side="right" align="start" className="w-56 p-0">
-                <p className="text-xs text-muted-foreground pt-2 pl-4">Empresas</p>
-                <div className="flex flex-col gap-1 p-2">
-                    {companySection.map((company) => {
-                    const Icon = company.icon;
-                    const isSelected = selectedCompany.name === company.name;
+                    <p className="text-xs text-muted-foreground pt-2 pl-4">{t("Empresas")}</p>
+                    <div className="flex flex-col gap-1 p-2">
+                        {companySection.map((company) => {
+                        const Icon = company.icon;
+                        const isSelected = selectedCompany.name === company.name;
 
-                    return (
-                        <button
-                        key={company.name}
-                        onClick={() => setSelectedCompany(company)}
-                        className={`flex items-center gap-2 p-2 rounded-md hover:bg-accent text-left ${
-                            isSelected ? "bg-accent" : ""
-                        }`}
-                        >
-                        <Icon className="h-6 w-6 border p-1 rounded-md" />
-                        <span className="text-sm font-medium grow">{company.name}</span>
-                        {isSelected && <span className="text-primary">✓</span>}
-                        </button>
-                    );
-                    })}
-                </div>
-                <button className="border-t flex gap-2 items-center p-2 pl-4 text-sm hover:bg-accent w-full text-left text-muted-foreground">
-                    <Plus className="h-5 w-5" />
-                    Adicionar Organização
-                </button>
+                        return (
+                            <button
+                            key={company.name}
+                            onClick={() => setSelectedCompany(company)}
+                            className={`flex items-center gap-2 p-2 rounded-md hover:bg-accent text-left ${
+                                isSelected ? "bg-accent" : ""
+                            }`}
+                            >
+                            <Icon className="h-6 w-6 border p-1 rounded-md" />
+                            <span className="text-sm font-medium grow">
+                                {t(company.name)}
+                            </span>
+                            {isSelected && <span className="text-primary">✓</span>}
+                            </button>
+                        );
+                        })}
+                    </div>
+                    <button className="border-t flex gap-2 items-center p-2 pl-4 text-sm hover:bg-accent w-full text-left text-muted-foreground">
+                        <Plus className="h-5 w-5" />
+                        {t("Adicionar Organização")}
+                    </button>
                 </PopoverContent>
             </Popover>
         );
@@ -69,7 +73,7 @@ export function SideMenuTop({ forceExpanded = false }: SideMenuTopProps) {
             </PopoverTrigger>
             <PopoverContent side="right" align="start" className="w-56 p-0 flex flex-col">
                 <p className="text-xs text-muted-foreground pt-2 pl-4">
-                    Empresas
+                    {t("Empresas")}
                 </p>
                 <div className="flex flex-col gap-1 p-2">
                     {companySection.map((company, index) => {
@@ -85,7 +89,7 @@ export function SideMenuTop({ forceExpanded = false }: SideMenuTopProps) {
                                     onClick={() => setSelectedCompany(company)}
                                 >
                                 <Icon className="h-6 w-6 border p-1 rounded-md"/>
-                                <span className="font-medium text-foreground grow">{company.name}</span>
+                                <span className="font-medium text-foreground grow">{t(company.name)}</span>
                                 {isSelected && (
                                     <Check className="h-6 w-6 border p-1 rounded-md text-primary bg-card" />
                                 )}
@@ -95,7 +99,7 @@ export function SideMenuTop({ forceExpanded = false }: SideMenuTopProps) {
                 </div>
                 <button className="border-t text-muted-foreground flex text-sm gap-2 items-center p-2 pl-4 cursor-pointer hover:bg-accent w-full text-left">
                     <Plus className="h-6 w-6 border p-1 rounded-md"/>
-                    <span className="font-medium">Adicionar Organização</span>
+                    <span className="font-medium">{t("Adicionar Organização")}</span>
                 </button>
             </PopoverContent>
         </Popover>  

@@ -1,5 +1,5 @@
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/Tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
 import { Button } from "@/components/ui/button";
 import { CircleUser, LogOut, Settings } from "lucide-react";
 

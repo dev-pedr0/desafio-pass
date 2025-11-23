@@ -1,6 +1,6 @@
 "use client";
 
-import { CardTop } from "../components/CardTop";
+import { CardTop } from "../components/CardHeader/CardTop";
 import { SideMenuSection } from "../components/SideMenu/SideMenuSection";
 import { SideMenuTop } from "../components/SideMenu/SideMenuTop";
 import { VehicleTable } from "../components/VehicleTable";
