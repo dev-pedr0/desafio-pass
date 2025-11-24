@@ -24,7 +24,7 @@ export function LanguageSelector() {
                 </Button>
             </PopoverTrigger>
 
-            <PopoverContent className="w-40 p-1 bg-background opacity-100">
+            <PopoverContent className="w-40 p-1">
                 {languages.map((lang) => (
                 <Button
                     key={lang.code}
