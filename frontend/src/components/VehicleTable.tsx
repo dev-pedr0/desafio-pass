@@ -14,6 +14,7 @@ import { ChangePageButton } from "./ChangePageButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { VehicleModal } from "./Modals/VehicleModal";
 import { useLocale } from "../context/LocaleContext";
+import { NewVehicleModal } from "./Modals/NewVehicleModal";
 
 export function VehicleTable() {
     const { vehicles, loading } = useVehicles();
@@ -23,6 +24,7 @@ export function VehicleTable() {
     const [openEditModal, setOpenEditModal] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState<any>(null);
     const [vehicleList, setVehicleList] = useState<any[]>([]);
+    const [openCreateModal, setOpenCreateModal] = useState(false);
 
     const { t } = useLocale();
 
@@ -116,7 +118,8 @@ export function VehicleTable() {
                             size="sm" 
                             variant="default" 
                             className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
-                            >
+                            onClick={() => setOpenCreateModal(true)}
+                        >
                             <Plus className="h-4 w-4"/>
                             <span className="text-md">{t(cardMenu[2].name)}</span>
                         </Button>
@@ -238,6 +241,18 @@ export function VehicleTable() {
                     />
                 </div>
             </div>
+
+            {openCreateModal && (
+                <NewVehicleModal
+                    open={openCreateModal}
+                    onClose={() => setOpenCreateModal(false)}
+                    onVehicleCreated={(newVehicle) => {
+                        setVehicleList(prev => [newVehicle, ...prev]);
+                        setOpenCreateModal(false);
+                    }}
+                />
+            )}
+
             {editingVehicle && (
                 <VehicleModal
                     open={openEditModal}
