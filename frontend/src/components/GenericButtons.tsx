@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useLocale } from "../context/LocaleContext";
+import { TranslationKey } from "../lib/i18n";
 
 type ButtonItem  = {
   icon: React.ComponentType<{ className?: string }>;
-  label: string;
+  label: TranslationKey;
 };
 
 type Props = {

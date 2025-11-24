@@ -16,7 +16,7 @@ export function CardTop() {
     return (
         <div className="text-muted-foreground flex items-center gap-3 border-b p-2">
             <Sheet>
-                <SheetTrigger>
+                <SheetTrigger asChild>
                     <button className="lg:hidden cursor-pointer p-2 hover:bg-sidebar-accent hover:text-foreground hover:rounded-full transition">
                         <PanelLeft className="h-4 w-4" />
                     </button>

@@ -5,18 +5,19 @@ import { usePathname } from "next/navigation";
 import { useSidebar } from "../../context/SideBarContext";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/Tooltip";
 import { useLocale } from "@/src/context/LocaleContext";
+import { TranslationKey } from "@/src/lib/i18n";
 
 interface MenuItem {
   icon: React.ComponentType<{ className?: string }>;
-  label: string;
+  label: TranslationKey;
   href: string;
 }
 
 type Props = {
-  title: string;
+  title: TranslationKey;
   items: MenuItem[];
   forceExpanded?: boolean;
-}
+};
 
 export function SideMenuSection({ title, items, forceExpanded = false }: Props) {
     const pathname = usePathname();

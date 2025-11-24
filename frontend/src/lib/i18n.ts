@@ -1,5 +1,7 @@
 // src/lib/i18n.ts
 export type Locale = "pt" | "en" | "es";
+export type TranslationKey = keyof typeof translations["pt"];
+export type TranslatableCompany = "Pass" | "Allinsys" | "Google";
 
 export const translations = {
   pt: {
