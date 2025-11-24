@@ -61,6 +61,11 @@ export class VeiculoController {
         return this.veiculoService.getSeriedadesOcorrencia();
     }
 
+    @Post()
+    async create(@Body() createVeiculoDto: any) {
+        return this.veiculoService.create(createVeiculoDto);
+    }
+
     @Put(':id')
     updateVehicle(
         @Param('id') id: string,

@@ -66,6 +66,56 @@ export class VeiculoService {
         };
     }
 
+    async create(data: any) {
+        const {
+            id,
+            criado_em,
+            imagem_veiculo,
+            documento_veiculo,
+            ocorrencia_veiculo,
+            abastecimento_veiculo,
+            usuario,
+            ...cleanData
+        } = data;
+
+        Object.keys(cleanData).forEach(key => {
+            if (cleanData[key] === '' || cleanData[key] === undefined) {
+                cleanData[key] = null;
+            }
+            if (typeof cleanData[key] === 'string' && !isNaN(Number(cleanData[key])) && cleanData[key] !== '') {
+                const num = Number(cleanData[key]);
+                if (Number.isInteger(num)) {
+                    cleanData[key] = num;
+                }
+            }
+        });
+
+        return this.prisma.veiculo.create({
+            data: cleanData,
+            include: {
+                marca: true,
+                categoria: true,
+                classificacao: true,
+                combustivel: true,
+                companhia: true,
+                tipo_placa: true,
+                usuario: true,
+                documento_veiculo: true,
+                imagem_veiculo: true,
+                ocorrencia_veiculo: {
+                    include: {
+                        tipo_ocorrencia: true,
+                        seriedade_ocorrencia: true,
+                    },
+                },
+                abastecimento_veiculo: {
+                    include: { combustivel: true },
+                    orderBy: { data: 'desc' },
+                },
+            },
+        });
+    }
+
     async uploadDocument(veiculoId: number, file: Express.Multer.File, data: any) {
         const arquivoUrl = `/uploads/documentos/${file.filename}`;
         const vencimento = data.vencimento ? new Date(data.vencimento) : null;

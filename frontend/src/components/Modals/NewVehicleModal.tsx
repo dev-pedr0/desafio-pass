@@ -11,7 +11,7 @@ import { OccurrencesSection } from "./vehicleSections/OccurrencesSection";
 import { FuelSection } from "./vehicleSections/FuelSection";
 import { useEffect, useState } from "react";
 import { SERVER_URL } from "@/url";
-import { Bus, Loader2, X } from "lucide-react";
+import { Loader2, Plus, X } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 
 const BASE_URL = SERVER_URL;
@@ -130,7 +130,7 @@ export function NewVehicleModal({
         <div className="flex items-center justify-between p-6 border-b bg-background">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-              <Bus className="h-7 w-7 text-muted-foreground" />
+              <Plus className="h-7 w-7 text-muted-foreground" />
             </div>
             <h2 className="text-2xl font-bold">Criar Novo Veículo</h2>
           </div>
@@ -138,7 +138,7 @@ export function NewVehicleModal({
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="rounded-full hover:bg-muted"
+            className="cursor-pointer rounded-full hover:bg-muted"
           >
             <X className="h-5 w-5" />
           </Button>
@@ -206,10 +206,10 @@ export function NewVehicleModal({
         </div>
 
         <div className="p-6 border-t bg-background flex justify-end gap-3">
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} className="cursor-pointer">
             Cancelar
           </Button>
-          <Button size="lg" onClick={handleCreate} disabled={isSaving} className="min-w-40">
+          <Button size="default" onClick={handleCreate} disabled={isSaving} className="cursor-pointer">
             {isSaving ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
