@@ -3,128 +3,152 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useVehicles } from "../hooks/useVehicles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { SearchSection } from "./SearchSection";
-import { cardMenu, tableButtons } from "../data/content";
-import { GenericButtons } from "./GenericButtons";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, CloudDownload, Pencil, Plus, RotateCw, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Pencil, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { PagesButton } from "./PagesButton";
 import { ChangePageButton } from "./ChangePageButton";
 import { Checkbox } from "@/components/ui/checkbox";
 import { VehicleModal } from "./Modals/VehicleModal";
-import { useLocale } from "../context/LocaleContext";
 import { NewVehicleModal } from "./Modals/NewVehicleModal";
+import { VehicleTableHeader } from "./VehicleTableHeader";
+
+type SearchMode = "identificador" | "titulo" | "placa";
+type StatusFilter = "todos" | "pendente" | "liberado" | "cancelado";
 
 export function VehicleTable() {
-    const { vehicles, loading } = useVehicles();
+    const { vehicles, loading, refetch } = useVehicles();
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [selected, setSelected] = useState<number[]>([]);
     const [openEditModal, setOpenEditModal] = useState(false);
     const [editingVehicle, setEditingVehicle] = useState<any>(null);
-    const [vehicleList, setVehicleList] = useState<any[]>([]);
     const [openCreateModal, setOpenCreateModal] = useState(false);
 
-    const { t } = useLocale();
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchMode, setSearchMode] = useState<SearchMode>("identificador");
+    const [statusFilter, setStatusFilter] = useState<StatusFilter>("todos");
 
-    useEffect(() => {
-        if (vehicles) {
-            setVehicleList(vehicles);
-        }
-    }, [vehicles]);
+    const filteredVehicles = useMemo(() => {
+        if (!vehicles) return [];
 
-    const totalPages = Math.ceil(vehicleList.length / itemsPerPage);
+        return vehicles.filter((v) => {
+        const term = searchTerm.toLowerCase().trim();
+
+        const matchesSearch =
+            term === "" ||
+            (searchMode === "identificador" &&
+            v.identificador?.toLowerCase().includes(term)) ||
+            (searchMode === "titulo" && v.modelo?.toLowerCase().includes(term)) ||
+            (searchMode === "placa" && v.placa?.toLowerCase().includes(term));
+
+        const matchesStatus =
+            statusFilter === "todos" || v.status === statusFilter;
+
+        return matchesSearch && matchesStatus;
+        });
+    }, [vehicles, searchTerm, searchMode, statusFilter]);
+
+    // Paginação baseada nos veículos já filtrados
+    const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedVehicles = vehicleList.slice(startIndex, startIndex + itemsPerPage);
-    
+    const paginatedVehicles = filteredVehicles.slice(startIndex, startIndex + itemsPerPage);
+
+    // Contagem correta de itens totais (filtrados)
+    const totalCount = filteredVehicles.length;
+    const selectedCount = selected.length;
+
+    // Verifica se toda a página está selecionada
     const isPageFullySelected =
         paginatedVehicles.length > 0 &&
         paginatedVehicles.every((vehicle) => selected.includes(vehicle.id));
 
-    const selectedCount = selected.length;
-    const totalCount = vehicleList.length;
-    
-    function goToFirstPage() { setCurrentPage(1); }
-    function goToPrevPage() { setCurrentPage((prev) => Math.max(1, prev - 1)); }
-    function goToNextPage() { setCurrentPage((prev) => Math.min(totalPages, prev + 1)); }
-    function goToLastPage() { setCurrentPage(totalPages); }
-    function handleItemsPerPage(n: number) { setItemsPerPage(n); setCurrentPage(1); }
+    // Funções de navegação
+    const goToFirstPage = () => setCurrentPage(1);
+    const goToPrevPage = () => setCurrentPage((prev) => Math.max(1, prev - 1));
+    const goToNextPage = () => setCurrentPage((prev) => Math.min(totalPages, prev + 1));
+    const goToLastPage = () => setCurrentPage(totalPages);
+    const handleItemsPerPage = (n: number) => {
+        setItemsPerPage(n);
+        setCurrentPage(1);
+    };
 
-    function toggleSelect(id: number) {
+    // Seleção
+    const toggleSelect = (id: number) => {
         setSelected((prev) =>
-            prev.includes(id)
-                ? prev.filter((v) => v !== id)
-                : [...prev, id]
-        );
-    }
-    
-    function isSelected(id: number) {
-        return selected.includes(id);
-    }
-
-    function toggleSelectAll() {
-        const pageIds = paginatedVehicles.map((v) => v.id);
-        const isAllSelected = pageIds.every((id) => selected.includes(id));
-
-        if (isAllSelected) {
-            setSelected((prev) => prev.filter((id) => !pageIds.includes(id)));
-        } else {
-            setSelected((prev) => [...new Set([...prev, ...pageIds])]);
-        }
-    }
-
-    const handleVehicleUpdated = (updatedVehicle: any) => {
-        setVehicleList((prev) =>
-            prev.map((v) => (v.id === updatedVehicle.id ? updatedVehicle : v))
+        prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
         );
     };
 
-    if (loading) {
-        return (
-            <p className="text-sm text-muted-foreground">Carregando...</p>
-        );
-    }
+    const isSelected = (id: number) => selected.includes(id);
+
+    const toggleSelectAll = () => {
+        const pageIds = paginatedVehicles.map((v) => v.id);
+        const allSelected = pageIds.every((id) => selected.includes(id));
+
+        if (allSelected) {
+        setSelected((prev) => prev.filter((id) => !pageIds.includes(id)));
+        } else {
+        setSelected((prev) => [...new Set([...prev, ...pageIds])]);
+        }
+    };
+
+    // Atualiza veículo (após editar) → recarrega tudo (mais simples e seguro)
+    const handleVehicleUpdated = () => {
+        refetch();
+    };
+
+    // Exportar CSV dos veículos filtrados
+    const handleExport = () => {
+        const headers = [
+        "ID",
+        "Identificador",
+        "Modelo",
+        "Placa",
+        "Marca",
+        "Companhia",
+        "Status",
+        "Criado em",
+        ];
+
+        const rows = filteredVehicles.map((v) => [
+        v.id,
+        v.identificador || "",
+        v.modelo || "",
+        v.placa || "",
+        v.marca?.nome || "",
+        v.companhia?.nome || "",
+        v.status || "",
+        new Date(v.criado_em).toLocaleDateString("pt-BR"),
+        ]);
+
+        const csv = [headers, ...rows].map((row) => row.join(";")).join("\n");
+        const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `veiculos_${new Date().toISOString().slice(0, 10)}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     return (
         <div className="border rounded-lg p-2 bg-card">
             <ScrollArea className="overflow-auto">
-                <div className="flex gap-2 justify-between items-center pb-3 border-b">
-                    <div className="flex gap-2 items-center">
-                        <SearchSection inputClassName=""/>
-                        <GenericButtons items={tableButtons}/>
-                    </div>
-                    <div className="flex gap-2 items-center">
-                        <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
-                            >
-                            <RotateCw className="h-4 w-4"/>
-                            <span className="text-md">{t(cardMenu[0].name)}</span>
-                        </Button>
-                        <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
-                            >
-                            <CloudDownload className="h-4 w-4"/>
-                            <span className="text-md">{t(cardMenu[1].name)}</span>
-                            <div className="w-px h-full bg-border"></div>
-                            <ChevronDown className="h-4 w-4"/>
-                        </Button>
-                        <div className="w-px h-6 bg-border"></div>
-                        <Button 
-                            size="sm" 
-                            variant="default" 
-                            className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
-                            onClick={() => setOpenCreateModal(true)}
-                        >
-                            <Plus className="h-4 w-4"/>
-                            <span className="text-md">{t(cardMenu[2].name)}</span>
-                        </Button>
-                    </div>
-                </div>
+                
+                <VehicleTableHeader
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                    searchMode={searchMode}
+                    onSearchModeChange={setSearchMode}
+                    statusFilter={statusFilter}
+                    onStatusFilterChange={setStatusFilter}
+                    onRefresh={refetch}
+                    onExport={handleExport}
+                    onCreateClick={() => setOpenCreateModal(true)}
+                />
+               
                 <div className="w-full max-h-150 p-2">
                     <Table className="text-xs">
                         <TableHeader>
@@ -246,8 +270,8 @@ export function VehicleTable() {
                 <NewVehicleModal
                     open={openCreateModal}
                     onClose={() => setOpenCreateModal(false)}
-                    onVehicleCreated={(newVehicle) => {
-                        setVehicleList(prev => [newVehicle, ...prev]);
+                    onVehicleCreated={() => {
+                        refetch();
                         setOpenCreateModal(false);
                     }}
                 />

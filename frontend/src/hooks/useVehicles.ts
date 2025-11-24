@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export interface Veiculo {
   id: number;
@@ -19,21 +19,33 @@ export interface Veiculo {
 export function useVehicles(page = 1, limit = 100) {
     const [vehicles, setVehicles] = useState<Veiculo[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        console.log("Hook rodando");
-        fetch(`/api/veiculos?page=${page}&limit=${limit}`)
-        .then((res) => res.json())
-        .then((data) => {
-            //console.log("Veículos recebidos:", data);
-            setVehicles(Array.isArray(data) ? data : data.data);
-            setLoading(false);
-        })
-        .catch((err) => {
-            console.error("Erro ao buscar veículos:", err);
-            setLoading(false);
-        });
+    const fetchVehicles = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+        const res = await fetch(`/api/veiculos?page=${page}&limit=${limit}`);
+        if (!res.ok) throw new Error("Falha ao carregar veículos");
+        const data = await res.json();
+        const list = Array.isArray(data) ? data : data.data || [];
+        setVehicles(list);
+        } catch (err: any) {
+        console.error("Erro ao buscar veículos:", err);
+        setError(err.message);
+        setVehicles([]);
+        } finally {
+        setLoading(false);
+        }
     }, [page, limit]);
 
-    return { vehicles, loading };
+    useEffect(() => {
+        fetchVehicles();
+    }, [fetchVehicles]);
+
+    const refetch = useCallback(() => {
+    fetchVehicles();
+  }, [fetchVehicles]);
+
+  return { vehicles, loading, error, refetch };
 }

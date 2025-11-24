@@ -3,21 +3,31 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/T
 
 type Props = {
   inputClassName?: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
 };
 
-export function SearchSection({ inputClassName = "" }: Props) {
+export function SearchSection({
+  inputClassName = "",
+  value,
+  onChange,
+  placeholder = "Pesquisar...",
+}: Props) {
     return(
         <div className={`flex items-center ${inputClassName} gap-1`}>
             <input
                 type="text"
-                placeholder="Pesquisar..."
-                className={
-                    `bg-transparent border border-input 
-                    rounded-md px-2 py-1 pr-9 text-sm 
-                    placeholder:text-muted-foreground 
-                    focus:outline-none focus:ring-2 
-                    focus:ring-ring ${inputClassName}`
-                }
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                className={`
+                bg-background border border-input rounded-md px-3 py-2 pr-10 text-sm
+                placeholder:text-muted-foreground focus:outline-none focus:ring-2 
+                focus:ring-ring focus:border-transparent transition
+                min-w-64
+                ${inputClassName}
+                `}
             />
             <TooltipProvider>
                 <Tooltip>
