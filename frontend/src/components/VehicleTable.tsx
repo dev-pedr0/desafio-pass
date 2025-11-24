@@ -5,7 +5,7 @@ import { useVehicles } from "../hooks/useVehicles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { PagesButton } from "./PagesButton";
 import { ChangePageButton } from "./ChangePageButton";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -285,7 +285,7 @@ export function VehicleTable() {
                         setEditingVehicle(null);
                     }}
                     vehicle={editingVehicle}
-                    onVehicleUpdated={handleVehicleUpdated} // ← aqui atualiza a tabela!
+                    onVehicleUpdated={handleVehicleUpdated}
                 />
             )}
         </div>

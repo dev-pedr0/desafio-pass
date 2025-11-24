@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CalendarDays, DollarSign, Fuel, TrendingUp } from "lucide-react";
+import { CalendarDays, Fuel } from "lucide-react";
 import { useState } from "react";
 import { FuelModal } from "../FuelModal";
 
@@ -12,10 +12,6 @@ interface FuelSectionProps {
 
 export function FuelSection({ abastecimentos = [], veiculoId, onFuelAdded }: FuelSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const totalLitros = abastecimentos.reduce((acc, a) => acc + (a.litros || 0), 0);
-  const totalValor = abastecimentos.reduce((acc, a) => acc + (a.valor || 0), 0);
-  const mediaPorLitro = totalLitros > 0 ? totalValor / totalLitros : 0;
 
   const formatDate = (date: string) =>
     date ? new Date(date).toLocaleDateString("pt-BR") : "—";

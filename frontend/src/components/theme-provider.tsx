@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 
-//object theme - can be light or dark
 type Theme = "dark" | "light";
 
 interface ThemeContextType {
@@ -17,7 +16,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         return "dark";
     });
 
-    //loads theme from localStorage on prefered system theme
     useEffect(() => {
         const stored = (typeof window !== "undefined" && localStorage.getItem("theme")) as Theme | null;
         if (stored === "light" || stored === "dark") {
@@ -32,7 +30,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         document.documentElement.classList.toggle("dark", prefersDark);
     }, []);
 
-    //loads theme when the useState changes
     useEffect(() => {
         document.documentElement.classList.toggle("dark", theme === "dark");
         try {
@@ -42,7 +39,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         }
     }, [theme]);
 
-    //changes useState
     function toggleTheme() {
         setTheme((prev) => (prev === "dark" ? "light" : "dark"));
     }

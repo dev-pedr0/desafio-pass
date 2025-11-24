@@ -122,6 +122,8 @@
   }
 }
 
+/*Variação de hover vermelha par botões*/
+
 .button-variant:hover{
   background-color: rgba(255, 60, 60, 0.2);
   color: var(--color-destructive);

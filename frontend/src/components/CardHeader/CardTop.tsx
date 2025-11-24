@@ -11,7 +11,7 @@ import { menuSection } from "../../data/content";
 import { SideMenuSection } from "../SideMenu/SideMenuSection";
 
 export function CardTop() {
-    const { toggleSidebar, isCollapsed } = useSidebar();
+    const { toggleSidebar } = useSidebar();
 
     return (
         <div className="text-muted-foreground flex items-center gap-3 border-b p-2">

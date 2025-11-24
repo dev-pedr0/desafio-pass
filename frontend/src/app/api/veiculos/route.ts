@@ -1,6 +1,7 @@
 import { SERVER_URL } from "@/url";
 import { NextResponse } from "next/server";
 
+// Rota para aquisição da lita de veículos de acordo com a quantidade de itens por página e a página atual
 export async function GET(request: Request) {
 
     const BASE_URL = SERVER_URL;
@@ -19,7 +20,6 @@ export async function GET(request: Request) {
         }
 
         const data = await res.json();
-        //console.log(data);
         return NextResponse.json(data);
         
     } catch (error) {

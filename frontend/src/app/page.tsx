@@ -12,6 +12,7 @@ export default function Home() {
   
   return (
     <div className="bg-card flex h-dvh w-dvw">
+      {/* //Container do menu lateral */}
       <div
         className={`
           hidden lg:flex flex-col my-2 mx-2 transition-all duration-300 ease-in-out
@@ -23,8 +24,13 @@ export default function Home() {
           <SideMenuSection key={index} title={section.title} items={section.items}/>
         ))}
       </div>
+
+      {/* Container do resto da página */}
       <div className="bg-background m-2 rounded-xl w-full max-w-full overflow-x-hidden">
+        {/* Cabeçalho da página */}
         <CardTop/>
+
+        {/* Card com tabela de veículos */}
         <div className="p-6">
           <VehicleTable/>
         </div>

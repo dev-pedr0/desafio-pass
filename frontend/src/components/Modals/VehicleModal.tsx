@@ -8,7 +8,7 @@ import { DescriptionSection } from "./vehicleSections/DescriptionSection";
 import { DocumentsSection } from "./vehicleSections/DocumentsSection";
 import { OccurrencesSection } from "./vehicleSections/OccurrencesSection";
 import { FuelSection } from "./vehicleSections/FuelSection";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { SERVER_URL } from "@/url";
 import { Bus, Loader2, X } from "lucide-react";
 import { cn } from "@/src/lib/utils";

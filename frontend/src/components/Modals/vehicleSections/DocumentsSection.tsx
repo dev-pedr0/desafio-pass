@@ -19,7 +19,7 @@ export function DocumentsSection({ documentos, veiculoId, onDocumentAdded }: Doc
 
   return (
     <div className="flex flex-col gap-8">
-      {/* Cabeçalho Premium */}
+      {/* Cabeçalho */}
       <div className="flex items-center justify-between border-b pb-5 -mx-8 px-8 bg-background/80 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <FileText className="w-6 h-6 text-primary" />
