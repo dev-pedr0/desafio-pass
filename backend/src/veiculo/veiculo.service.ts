@@ -67,53 +67,68 @@ export class VeiculoService {
     }
 
     async create(data: any) {
-        const {
-            id,
-            criado_em,
-            imagem_veiculo,
-            documento_veiculo,
-            ocorrencia_veiculo,
-            abastecimento_veiculo,
-            usuario,
-            ...cleanData
-        } = data;
+        try {
+            const totalVehicles = await this.prisma.veiculo.count();
+            const novoId = totalVehicles + 1;
 
-        Object.keys(cleanData).forEach(key => {
-            if (cleanData[key] === '' || cleanData[key] === undefined) {
-                cleanData[key] = null;
-            }
-            if (typeof cleanData[key] === 'string' && !isNaN(Number(cleanData[key])) && cleanData[key] !== '') {
-                const num = Number(cleanData[key]);
-                if (Number.isInteger(num)) {
-                    cleanData[key] = num;
+            const cleanData: any = {
+                id: novoId,
+                identificador: data.identificador?.trim() || null,
+                companhia_id: data.companhia_id ? Number(data.companhia_id) : null,
+                modelo: data.modelo?.trim() || null,
+                ano: data.ano ? Number(data.ano) : null,
+                marca_id: data.marca_id ? Number(data.marca_id) : null,
+                categoria_id: data.categoria_id ? Number(data.categoria_id) : null,
+                classificacao_id: data.classificacao_id ? Number(data.classificacao_id) : null,
+                capacidade: data.capacidade ? Number(data.capacidade) : null,
+                portais: data.portais ? Number(data.portais) : null,
+                estado: data.estado?.trim() || null,
+                uf: data.uf?.trim() || null,
+                tipo_placa_id: data.tipo_placa_id ? Number(data.tipo_placa_id) : null,
+                placa: data.placa?.trim() || null,
+                renavam: data.renavam?.trim() || null,
+                chassi: data.chassi?.trim() || null,
+                revisao_km: data.revisao_km ? Number(data.revisao_km) : null,
+                combustivel_id: data.combustivel_id ? Number(data.combustivel_id) : null,
+                descricao: data.descricao?.trim() || null,
+
+                usuario_id: 1,                    
+                status: 'pendente' as const,
+            };
+
+            Object.keys(cleanData).forEach(key => {
+                if (cleanData[key] === null || cleanData[key] === undefined) {
+                    delete cleanData[key];
                 }
-            }
-        });
+            });
 
-        return this.prisma.veiculo.create({
-            data: cleanData,
-            include: {
-                marca: true,
-                categoria: true,
-                classificacao: true,
-                combustivel: true,
-                companhia: true,
-                tipo_placa: true,
-                usuario: true,
-                documento_veiculo: true,
-                imagem_veiculo: true,
-                ocorrencia_veiculo: {
-                    include: {
-                        tipo_ocorrencia: true,
-                        seriedade_ocorrencia: true,
+            return await this.prisma.veiculo.create({
+                data: cleanData,
+                include: {
+                    marca: true,
+                    categoria: true,
+                    classificacao: true,
+                    combustivel: true,
+                    companhia: true,
+                    tipo_placa: true,
+                    documento_veiculo: true,
+                    imagem_veiculo: true,
+                    ocorrencia_veiculo: {
+                        include: {
+                            tipo_ocorrencia: true,
+                            seriedade_ocorrencia: true,
+                        },
+                    },
+                    abastecimento_veiculo: {
+                        include: { combustivel: true },
+                        orderBy: { data: 'desc' },
                     },
                 },
-                abastecimento_veiculo: {
-                    include: { combustivel: true },
-                    orderBy: { data: 'desc' },
-                },
-            },
-        });
+            });
+        } catch (error: any) {
+            console.error('Erro fatal ao criar veículo:', error);
+            throw new Error(`Erro ao criar veículo: ${error.message}`);
+        }
     }
 
     async uploadDocument(veiculoId: number, file: Express.Multer.File, data: any) {
