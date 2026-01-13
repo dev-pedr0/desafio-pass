@@ -14,12 +14,6 @@ export class VeiculoController {
     return this.veiculoService.findAll(Number(page), Number(limit));
   }
 
-  /** Busca um veículo específico pelo ID */
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.veiculoService.findOne(Number(id));
-  }
-
   /** Busca dados auxiliares*/
   @Get('companias')
   getCompanhias() {
@@ -159,5 +153,11 @@ export class VeiculoController {
     @Body() data: any,
   ) {
     return this.veiculoService.createAbastecimento(veiculoId, data);
+  }
+
+  /** Busca um veículo específico pelo ID */
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.veiculoService.findOne(Number(id));
   }
 }
