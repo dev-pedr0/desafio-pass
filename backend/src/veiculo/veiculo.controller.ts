@@ -155,6 +155,12 @@ export class VeiculoController {
     return this.veiculoService.createAbastecimento(veiculoId, data);
   }
 
+  /* Deleta um veículo por ID */
+  @Delete(':id')
+    delete(@Param('id', ParseIntPipe) id: number) {
+    return this.veiculoService.delete(id);
+  }
+
   /** Busca um veículo específico pelo ID */
   @Get(':id')
   findOne(@Param('id') id: string) {

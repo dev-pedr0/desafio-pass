@@ -1,7 +1,7 @@
 "use client";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useVehicles } from "../hooks/useVehicles";
+import { deleteVehicle, useVehicles } from "../hooks/useVehicles";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
@@ -205,7 +205,20 @@ export function VehicleTable() {
                                                 size="sm"
                                                 variant="ghost"
                                                 className="cursor-pointer h-7 w-7 p-0 text-destructive"
-                                                onClick={() => console.log("Deletar", vehicle.id)}
+                                                onClick={async () => {
+                                                    const confirm = window.confirm(
+                                                        `Tem certeza que deseja excluir o veículo "${vehicle.identificador || vehicle.modelo}"?`
+                                                    );
+
+                                                    if (!confirm) return;
+
+                                                    try {
+                                                        await deleteVehicle(vehicle.id);
+                                                        refetch();
+                                                    } catch (err) {
+                                                        alert("Erro ao deletar veículo");
+                                                    }
+                                                }}
                                             >
                                                 <Trash2 className="w-3.5 h-3.5"/>
                                             </Button>

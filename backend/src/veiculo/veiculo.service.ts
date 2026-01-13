@@ -264,4 +264,11 @@ export class VeiculoService {
       include: { combustivel: true },
     });
   }
+
+  /**Deleta o veículo selecionado */
+  async delete(id: number) {
+  return this.prisma.veiculo.delete({
+    where: { id },
+  });
+}
 }

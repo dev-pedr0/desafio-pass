@@ -49,3 +49,15 @@ export function useVehicles(page = 1, limit = 100) {
 
   return { vehicles, loading, error, refetch };
 }
+
+export async function deleteVehicle(id: number) {
+  const res = await fetch(`http://localhost:3001/veiculo/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error("Erro ao deletar veículo");
+  }
+
+  return true;
+}
