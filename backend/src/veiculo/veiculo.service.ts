@@ -69,11 +69,7 @@ export class VeiculoService {
   /** Cria um novo veículo (usado no modal de criação) */
   async create(data: any) {
     try {
-      const totalVehicles = await this.prisma.veiculo.count();
-      const novoId = totalVehicles + 1;
-
       const cleanData: any = {
-        id: novoId,
         identificador: data.identificador?.trim() || null,
         companhia_id: data.companhia_id ? Number(data.companhia_id) : null,
         modelo: data.modelo?.trim() || null,
