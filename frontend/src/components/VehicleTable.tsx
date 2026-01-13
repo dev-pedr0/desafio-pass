@@ -147,6 +147,7 @@ export function VehicleTable() {
                     onRefresh={refetch}
                     onExport={handleExport}
                     onCreateClick={() => setOpenCreateModal(true)}
+                    loading={loading}
                 />
                
                 <div className="w-full max-h-150 p-2">

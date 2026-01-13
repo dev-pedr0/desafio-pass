@@ -20,6 +20,7 @@ interface VehicleTableHeaderProps {
   onRefresh: () => void;
   onExport: () => void;
   onCreateClick: () => void;
+  loading: boolean;
 }
 
 export function VehicleTableHeader({
@@ -32,6 +33,7 @@ export function VehicleTableHeader({
   onRefresh,
   onExport,
   onCreateClick,
+  loading,
 }: VehicleTableHeaderProps) {
   const { t } = useLocale();
 
@@ -115,8 +117,13 @@ export function VehicleTableHeader({
             variant="outline"
             className="rounded-md cursor-pointer focus:ring-2 focus:ring-ring"
             onClick={onRefresh}
+            disabled={loading}
         >
-          <RotateCw className="h-4 w-4" />
+          <RotateCw
+            className={`h-4 w-4 transition-transform ${
+              loading ? "animate-spin" : ""
+            }`}
+          />
           <span className="text-md">{t(cardMenu[0].name)}</span>
         </Button>
 

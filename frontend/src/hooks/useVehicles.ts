@@ -40,11 +40,11 @@ export function useVehicles(page = 1, limit = 100) {
     }, [page, limit]);
 
     useEffect(() => {
-        fetchVehicles();
+      fetchVehicles();
     }, [fetchVehicles]);
 
     const refetch = useCallback(() => {
-    fetchVehicles();
+      fetchVehicles();
   }, [fetchVehicles]);
 
   return { vehicles, loading, error, refetch };
