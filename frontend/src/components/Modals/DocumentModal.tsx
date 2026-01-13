@@ -108,7 +108,7 @@ export function DocumentFormModal({ veiculoId, open, onClose, onDocumentAdded }:
     if (!open) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60">
             <div className="bg-background p-6 rounded-lg shadow-2xl w-[500px] max-w-[90vw] flex flex-col gap-5">
                 <h3 className="text-xl font-bold">Adicionar Novo Documento</h3>
                 
@@ -137,7 +137,7 @@ export function DocumentFormModal({ veiculoId, open, onClose, onDocumentAdded }:
                                     {form.vencimento ? format(form.vencimento, "PPP", { locale: ptBR }) : <span>Selecione a data</span>}
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 z-[70]">
+                            <PopoverContent className="w-auto p-0 z-70">
                                 <Calendar
                                     mode="single"
                                     selected={form.vencimento || undefined}
