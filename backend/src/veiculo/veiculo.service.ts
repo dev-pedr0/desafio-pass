@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import path from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as fs from 'fs';
@@ -289,6 +289,84 @@ export class VeiculoService {
       select: { id: true, nome: true },
       orderBy: { nome: 'asc' },
     });
+  }
+
+  /*Busca uma ocorrencia por Id*/
+  async findOcorrenciaById(id: number) {
+    return this.prisma.ocorrencia_veiculo.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        anexo: true,
+      },
+    });
+  }
+
+  /** Atualiza uma ocorrencia */
+  async updateOccurrence(
+    veiculoId: number,
+    ocorrenciaId: number,
+    file: Express.Multer.File,
+    data: any,
+  ) {
+    const ocorrencia = await this.prisma.ocorrencia_veiculo.findFirst({
+      where: {
+        id: ocorrenciaId,
+        veiculo_id: veiculoId,
+      },
+    });
+
+    if (!ocorrencia) {
+      throw new NotFoundException('Ocorrência não encontrada');
+    }
+
+    let anexoPath = ocorrencia.anexo;
+
+    if (file) {
+      anexoPath = `/uploads/ocorrencias/${file.filename}`;
+    }
+
+    return this.prisma.ocorrencia_veiculo.update({
+      where: { id: ocorrenciaId },
+      data: {
+        data: data.data ? new Date(data.data) : null,
+        classificacao_id: Number(data.classificacao_id),
+        seriedade_id: Number(data.seriedade_id),
+        descricao: data.descricao || null,
+        anexo: anexoPath,
+      },
+    });
+  }
+
+
+  /*Deleta uma ocorrencia de um veículo*/
+  async deleteOcorrencia(ocorrenciaId: number) {
+    const ocorrencia  = await this.prisma.ocorrencia_veiculo.findUnique({
+      where: { id: ocorrenciaId },
+    });
+
+    if (!ocorrencia) {
+      throw new Error('Ocorrência não encontrada');
+    }
+
+    if (ocorrencia.anexo) {
+      const filePath = path.join(
+        process.cwd(),
+        "uploads",
+        "ocorrencias",
+        ocorrencia.anexo
+      );
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    await this.prisma.ocorrencia_veiculo.delete({
+      where: { id: ocorrenciaId },
+    });
+
+    return { success: true };
   }
 
 

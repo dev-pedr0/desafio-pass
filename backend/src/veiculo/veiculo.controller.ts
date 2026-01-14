@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Put, Query, Res, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { VeiculoService } from './veiculo.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { extname, join } from 'path';
+import { existsSync } from 'fs';
+import express from "express";
 
 @Controller('veiculo')
 export class VeiculoController {
@@ -56,6 +58,27 @@ export class VeiculoController {
     return this.veiculoService.getSeriedadesOcorrencia();
   }
 
+  /*Busca o arquivo de uma ocorrência*/
+  @Get("ocorrencias/arquivo/:id")
+  async getOcorrenciaArquivo(
+    @Param("id") id: string,
+    @Res() res: express.Response,
+  ) {
+    const ocorrencia = await this.veiculoService.findOcorrenciaById(Number(id));
+
+    if (!ocorrencia || !ocorrencia.anexo) {
+      throw new NotFoundException("Arquivo não encontrado");
+    }
+
+    const filePath = join(process.cwd(), ocorrencia.anexo);
+
+    if (!existsSync(filePath)) {
+      throw new NotFoundException("Arquivo não existe no servidor");
+    }
+
+    return res.sendFile(filePath);
+  }
+
   /** Cria um novo veículo */
   @Post()
   async create(@Body() createVeiculoDto: any) {
@@ -67,6 +90,42 @@ export class VeiculoController {
   updateVehicle(@Param('id') id: string, @Body() data: any) {
     return this.veiculoService.updateVehicle(Number(id), data);
   }
+
+  /** Atualiza os dados de uma ocorrência existente */
+  @Put(':id/ocorrencias/:ocorrenciaId')
+  @UseInterceptors(
+    FileInterceptor('anexo', {
+      storage: diskStorage({
+        destination: './uploads/ocorrencias',
+        filename: (_, file, cb) => {
+          const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, unique + extname(file.originalname));
+        },
+      }),
+      fileFilter: (_, file, cb) => {
+        const allowed = ['.pdf', '.png', '.jpg', '.jpeg', '.doc', '.docx'];
+        if (allowed.includes(extname(file.originalname).toLowerCase())) {
+          cb(null, true);
+        } else {
+          cb(new Error('Formato de arquivo não permitido'), false);
+        }
+      },
+    }),
+  )
+  async updateOccurrence(
+    @Param('id', ParseIntPipe) veiculoId: number,
+    @Param('ocorrenciaId', ParseIntPipe) ocorrenciaId: number,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() data: any,
+  ) {
+    return this.veiculoService.updateOccurrence(
+      veiculoId,
+      ocorrenciaId,
+      file,
+      data,
+    );
+  }
+
 
   /** Upload de até 10 imagens para um veículo */
   @Post(':id/imagens')
@@ -161,11 +220,20 @@ export class VeiculoController {
     return this.veiculoService.delete(id);
   }
 
+  /* Deleta um documento por ID */
   @Delete(':veiculoId/documentos/:documentoId')
   async deleteDocumento(
     @Param('documentoId') documentoId: string,
   ) {
     return this.veiculoService.deleteDocumento(Number(documentoId));
+  }
+
+  /* Deleta um ocorrencia por ID */
+  @Delete(':veiculoId/ocorrencias/:ocorrenciaId')
+  async deleteOcorrencia(
+    @Param('ocorrenciaId') ocorrenciaId: string,
+  ) {
+    return this.veiculoService.deleteOcorrencia(Number(ocorrenciaId));
   }
 
   /** Busca um veículo específico pelo ID */

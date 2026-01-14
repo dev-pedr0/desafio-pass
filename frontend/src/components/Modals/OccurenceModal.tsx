@@ -18,6 +18,7 @@ interface OccurrenceFormModalProps {
   onClose: () => void;
   veiculoId: number;
   onOccurrenceAdded: () => Promise<void>;
+  occurrence?: any | null;
 }
 
 export function OccurrenceFormModal({
@@ -25,6 +26,7 @@ export function OccurrenceFormModal({
   onClose,
   veiculoId,
   onOccurrenceAdded,
+  occurrence,
 }: OccurrenceFormModalProps) {
     const [isSaving, setIsSaving] = useState(false);
     const [tipos, setTipos] = useState<any[]>([]);
@@ -36,6 +38,32 @@ export function OccurrenceFormModal({
         descricao: "",
         anexo: null as File | null,
     });
+
+    useEffect(() => {
+        if (!occurrence) return;
+
+        setForm({
+            data: occurrence.data ? new Date(occurrence.data) : null,
+            classificacao_id: String(occurrence.classificacao_id),
+            seriedade_id: String(occurrence.seriedade_id),
+            descricao: occurrence.descricao || "",
+            anexo: null,
+        });
+    }, [occurrence]);
+
+    useEffect(() => {
+        if (!open) return;
+
+        if (!occurrence) {
+            setForm({
+            data: null,
+            classificacao_id: "",
+            seriedade_id: "",
+            descricao: "",
+            anexo: null,
+            });
+        }
+        }, [open, occurrence]);
 
     useEffect(() => {
         if (!open) return;
@@ -50,11 +78,12 @@ export function OccurrenceFormModal({
 
     const handleSave = async () => {
         if (!form.classificacao_id || !form.seriedade_id) {
-        alert("Tipo e Seriedade são obrigatórios");
-        return;
+            alert("Tipo e Seriedade são obrigatórios");
+            return;
         }
 
         setIsSaving(true);
+
         const formData = new FormData();
         formData.append("classificacao_id", form.classificacao_id);
         formData.append("seriedade_id", form.seriedade_id);
@@ -62,18 +91,32 @@ export function OccurrenceFormModal({
         if (form.descricao) formData.append("descricao", form.descricao);
         if (form.anexo) formData.append("anexo", form.anexo);
 
+        const isEdit = !!occurrence;
+
+        const url = isEdit
+            ? `${SERVER_URL}/veiculo/${veiculoId}/ocorrencias/${occurrence.id}`
+            : `${SERVER_URL}/veiculo/${veiculoId}/ocorrencias`;
+
+        const method = isEdit ? "PUT" : "POST";
+
         try {
-        const res = await fetch(`${BASE_URL}/veiculo/${veiculoId}/ocorrencias`, {
-            method: "POST",
+            const res = await fetch(url, {
+            method,
             body: formData,
-        });
+            });
 
-        if (!res.ok) throw new Error("Erro ao salvar ocorrência");
+            if (!res.ok) throw new Error("Erro ao salvar ocorrência");
 
-        await onOccurrenceAdded();
-        onClose();
-        // reset
-        setForm({ data: null, classificacao_id: "", seriedade_id: "", descricao: "", anexo: null });
+            await onOccurrenceAdded();
+            onClose();
+
+            setForm({
+            data: null,
+            classificacao_id: "",
+            seriedade_id: "",
+            descricao: "",
+            anexo: null,
+            });
         } catch (err) {
             console.error(err);
             alert("Erro ao salvar ocorrência");
@@ -86,90 +129,101 @@ export function OccurrenceFormModal({
 
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div className="bg-background p-6 rounded-lg shadow-xl w-[520px] max-w-[95vw] flex flex-col gap-5">
-            <h3 className="text-xl font-bold">Nova Ocorrência</h3>
+            <div className="bg-background p-6 rounded-lg shadow-xl w-[520px] max-w-[95vw] flex flex-col gap-5">
+                <h3 className="text-xl font-bold">Nova Ocorrência</h3>
 
-            <div className="grid gap-4">
-            <div className="space-y-2">
-                <Label>Data da Ocorrência</Label>
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button variant="outline" className="w-full justify-start text-left font-normal">
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {form.data ? format(form.data, "PPP", { locale: ptBR }) : "Selecione"}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                        <Calendar
-                            mode="single"
-                            selected={form.data || undefined}
-                            onSelect={(d) => setForm(prev => ({ ...prev, data: d || null }))}
-                            locale={ptBR}
+                <div className="grid gap-4">
+                    <div className="space-y-2">
+                        <Label>Data da Ocorrência</Label>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button variant="outline" className="w-full justify-start text-left font-normal cursor-pointer">
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {form.data ? format(form.data, "PPP", { locale: ptBR }) : "Selecione"}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                    mode="single"
+                                    selected={form.data || undefined}
+                                    onSelect={(d) => setForm(prev => ({ ...prev, data: d || null }))}
+                                    locale={ptBR}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>Tipo de Ocorrência <span className="text-chart-5">*</span></Label>
+                        <Select value={form.classificacao_id} onValueChange={v => setForm(prev => ({ ...prev, classificacao_id: v }))}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Selecione o tipo"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {tipos.map(t => (
+                                <SelectItem key={t.id} value={String(t.id)}>{t.nome}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>Seriedade <span className="text-chart-5">*</span></Label>
+                        <Select value={form.seriedade_id} onValueChange={v => setForm(prev => ({ ...prev, seriedade_id: v }))}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Selecione a seriedade"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {seriedades.map(s => (
+                                <SelectItem key={s.id} value={String(s.id)}>{s.nome}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label>Descrição</Label>
+                        <Textarea
+                            placeholder="Detalhes da ocorrência..."
+                            value={form.descricao}
+                            onChange={e => setForm(prev => ({ ...prev, descricao: e.target.value }))}
+                            rows={4}
                         />
-                    </PopoverContent>
-                </Popover>
-            </div>
+                    </div>
 
-            <div className="space-y-2">
-                <Label>Tipo de Ocorrência <span className="text-chart-5">*</span></Label>
-                <Select value={form.classificacao_id} onValueChange={v => setForm(prev => ({ ...prev, classificacao_id: v }))}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Selecione o tipo"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        {tipos.map(t => (
-                        <SelectItem key={t.id} value={String(t.id)}>{t.nome}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
+                    <div className="space-y-2">
+                        <Label>Anexo (PDF, imagem, etc.)</Label>
+                        <Input
+                            id="arquivo"
+                            type="file"
+                            accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                            onChange={e => setForm(prev => ({ ...prev, anexo: e.target.files?.[0] || null }))}
+                            className="hidden"
+                        />
+                        <label
+                            htmlFor="arquivo"
+                            className="flex items-center justify-center gap-2 px-4 py-2 border rounded-md cursor-pointer hover:bg-muted transition text-sm font-medium"
+                        >
+                            📎 Selecionar arquivo
+                        </label>
+                        {form.anexo && (
+                            <p className="text-xs text-green-600">Arquivo selecionado: {form.anexo.name}</p>
+                        )}
+                    </div>
+                </div>
 
-            <div className="space-y-2">
-                <Label>Seriedade <span className="text-chart-5">*</span></Label>
-                <Select value={form.seriedade_id} onValueChange={v => setForm(prev => ({ ...prev, seriedade_id: v }))}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Selecione a seriedade"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        {seriedades.map(s => (
-                        <SelectItem key={s.id} value={String(s.id)}>{s.nome}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+                <div className="flex justify-end gap-3">
+                    <Button variant="outline" onClick={onClose} disabled={isSaving} className="cursor-pointer">Cancelar</Button>
+                    <Button onClick={handleSave} disabled={isSaving} className="cursor-pointer">
+                        {isSaving ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Salvando...
+                        </>
+                        ) : "Salvar Ocorrência"}
+                    </Button>
+                </div>
             </div>
-
-            <div className="space-y-2">
-                <Label>Descrição</Label>
-                <Textarea
-                    placeholder="Detalhes da ocorrência..."
-                    value={form.descricao}
-                    onChange={e => setForm(prev => ({ ...prev, descricao: e.target.value }))}
-                    rows={4}
-                />
-            </div>
-
-            <div className="space-y-2">
-                <Label>Anexo (PDF, imagem, etc.)</Label>
-                <Input
-                    type="file"
-                    accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
-                    onChange={e => setForm(prev => ({ ...prev, anexo: e.target.files?.[0] || null }))}
-                />
-            </div>
-            </div>
-
-            <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={onClose} disabled={isSaving} className="cursor-pointer">Cancelar</Button>
-                <Button onClick={handleSave} disabled={isSaving} className="cursor-pointer">
-                    {isSaving ? (
-                    <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Salvando...
-                    </>
-                    ) : "Salvar Ocorrência"}
-                </Button>
-            </div>
-        </div>
         </div>
     );
 }

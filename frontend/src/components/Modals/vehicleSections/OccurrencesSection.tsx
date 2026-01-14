@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AlertCircle, AlertTriangle, Calendar, FileWarning, TriangleAlert } from "lucide-react";
 import { OccurrenceFormModal } from "../OccurenceModal";
 import { useState } from "react";
+import { SERVER_URL } from "@/url";
 
 interface OccurrencesSectionProps {
   ocorrencias: any[];
@@ -12,6 +13,7 @@ interface OccurrencesSectionProps {
 
 export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAdded }: OccurrencesSectionProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedOccurrence, setSelectedOccurrence] = useState<any | null>(null);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return "—";
@@ -29,7 +31,10 @@ export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAd
           <AlertTriangle className="w-6 h-6 text-primary" />
           <h3 className="text-2xl font-bold tracking-tight">Ocorrências do Veículo</h3>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} size="lg" className="cursor-pointer rounded-full shadow-lg hover:shadow-xl transition-shadow">
+        <Button onClick={() => {
+            setSelectedOccurrence(null);
+            setIsModalOpen(true);
+          }}  size="lg" className="cursor-pointer rounded-full shadow-lg hover:shadow-xl transition-shadow">
           Nova Ocorrência
         </Button>
       </div>
@@ -38,21 +43,29 @@ export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAd
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-1/3">
+              <TableHead className="w-1/4">
                 <div className="flex items-center gap-2 justify-center">
                   <Calendar className="w-4 h-4" />
                   Data
                 </div>
               </TableHead>
-              <TableHead className="w-1/3">Tipo de Ocorrência</TableHead>
-              <TableHead className="text-center w-1/3">Seriedade</TableHead>
+              <TableHead className="w-1/4">Tipo de Ocorrência</TableHead>
+              <TableHead className="text-center w-1/4">Seriedade</TableHead>
+              <TableHead className="text-center w-1/4">Arquivo</TableHead>            
             </TableRow>
           </TableHeader>
           <TableBody>
             {ocorrencias.length > 0 ? (
               ocorrencias.map((oc: any) => {
                 return (
-                  <TableRow key={oc.id} className="hover:bg-muted/50 transition-colors">
+                  <TableRow
+                    key={oc.id}
+                    onClick={() => {
+                      setSelectedOccurrence(oc);
+                      setIsModalOpen(true);
+                    }}
+                    className="cursor-pointer hover:bg-muted/50"
+                  >
                     <TableCell className="text-center font-medium">
                       {formatDate(oc.data)}
                     </TableCell>
@@ -72,12 +85,26 @@ export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAd
                         {oc.seriedade_ocorrencia?.nome || "—"}
                       </span>
                     </TableCell>
+                    <TableCell className="text-center">
+                      {oc.anexo ? (
+                        <a
+                          href={`${SERVER_URL}/ocorrencias/arquivo/${oc.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        >
+                          Ver arquivo
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
                   </TableRow>
                 );
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={3} className="text-center py-16">
+                <TableCell colSpan={4} className="text-center py-16">
                   <div className="flex flex-col items-center gap-4 text-muted-foreground">
                     <div className="p-6 bg-muted/50 rounded-full">
                       <AlertTriangle className="w-12 h-12" />
@@ -99,11 +126,16 @@ export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAd
       {/* Modal de Nova Ocorrência */}
       <OccurrenceFormModal
         open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+         onClose={() => {
+          setIsModalOpen(false);
+          setSelectedOccurrence(null);
+        }}
         veiculoId={veiculoId}
+        occurrence={selectedOccurrence}
         onOccurrenceAdded={async () => {
           await onOccurrenceAdded();
           setIsModalOpen(false);
+          setSelectedOccurrence(null);
         }}
       />
     </div>
