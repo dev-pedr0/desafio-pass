@@ -71,7 +71,7 @@ export function SideMenuSection({ title, items, forceExpanded = false }: Props) 
                     const isActive = pathname === item.href; 
 
                     return (
-                        <li key={index} className="mb-0.5">
+                        <li key={index} className="mb-0.2">
                             <Link 
                                 href={item.href} 
                                 className={`flex items-center gap-3 px-2 py-2 rounded-md transition text-sm

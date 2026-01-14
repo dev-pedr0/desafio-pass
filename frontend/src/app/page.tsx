@@ -16,7 +16,7 @@ export default function Home() {
       <div
         className={`
           hidden lg:flex flex-col my-2 mx-2 transition-all duration-300 ease-in-out
-          ${isCollapsed ? "w-10" : "w-68"} ${isCollapsed ? "gap-3" : "gap-8"}
+          ${isCollapsed ? "w-10" : "w-68"} ${isCollapsed ? "gap-3" : "gap-6"}
         `}
       >
         <SideMenuTop/>
