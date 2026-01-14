@@ -400,6 +400,23 @@ export class VeiculoService {
     });
   }
 
+  /** Deleta um abastecimento */
+  async deleteAbastecimento(abastecimentoId: number) {
+    const abastecimento = await this.prisma.abastecimento_veiculo.findUnique({
+      where: { id: abastecimentoId },
+    });
+
+    if (!abastecimento) {
+      throw new NotFoundException('Abastecimento não encontrado');
+    }
+
+    await this.prisma.abastecimento_veiculo.delete({
+      where: { id: abastecimentoId },
+    });
+
+    return { success: true };
+  }
+
   /**Deleta o veículo selecionado */
   async delete(id: number) {
   return this.prisma.veiculo.delete({

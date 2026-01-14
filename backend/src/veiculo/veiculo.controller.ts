@@ -205,6 +205,14 @@ export class VeiculoController {
     return this.veiculoService.createAbastecimento(veiculoId, data);
   }
 
+  /** Deleta um abastecimento */
+  @Delete(':id/abastecimentos/:abastecimentoId')
+  async deleteAbastecimento(
+    @Param('abastecimentoId', ParseIntPipe) abastecimentoId: number,
+  ) {
+    return this.veiculoService.deleteAbastecimento(abastecimentoId);
+  }
+
   /* Deleta um veículo por ID */
   @Delete(':id')
     delete(@Param('id', ParseIntPipe) id: number) {

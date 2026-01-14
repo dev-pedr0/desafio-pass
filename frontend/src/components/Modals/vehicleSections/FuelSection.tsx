@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CalendarDays, Fuel } from "lucide-react";
+import { CalendarDays, Fuel, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { FuelModal } from "../FuelModal";
+import { SERVER_URL } from "@/url";
 
 interface FuelSectionProps {
   abastecimentos: any[];
@@ -16,8 +17,23 @@ export function FuelSection({ abastecimentos = [], veiculoId, onFuelAdded }: Fue
   const formatDate = (date: string) =>
     date ? new Date(date).toLocaleDateString("pt-BR") : "—";
 
-  const formatCurrency = (value: number) =>
-    value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    const formatCurrency = (value: number) =>
+      value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    
+    const handleDelete = async (id: number) => {
+    if (!confirm("Deseja realmente excluir este abastecimento?")) return;
+
+    const res = await fetch(`${SERVER_URL}/veiculo/${veiculoId}/abastecimentos/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      alert("Erro ao excluir abastecimento");
+      return;
+    }
+
+    await onFuelAdded();
+  };
   
   return (
     <div className="flex flex-col gap-8">
@@ -36,16 +52,17 @@ export function FuelSection({ abastecimentos = [], veiculoId, onFuelAdded }: Fue
         <Table className="w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center w-1/5">
+              <TableHead className="text-center w-1/6">
                 <div className="flex items-center justify-center gap-2">
                   <CalendarDays className="w-4 h-4" />
                   Data
                 </div>
               </TableHead>
-              <TableHead className="text-center w-1/5">Fornecedor</TableHead>
-              <TableHead className="text-center w-1/5">Combustível</TableHead>
-              <TableHead className="text-center w-1/5">Litros</TableHead>
-              <TableHead className="text-center w-1/5">Valor</TableHead>
+              <TableHead className="text-center w-1/6">Fornecedor</TableHead>
+              <TableHead className="text-center w-1/6">Combustível</TableHead>
+              <TableHead className="text-center w-1/6">Litros</TableHead>
+              <TableHead className="text-center w-1/6">Valor</TableHead>
+              <TableHead className="text-center w-1/6">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -69,11 +86,24 @@ export function FuelSection({ abastecimentos = [], veiculoId, onFuelAdded }: Fue
                   <TableCell className="text-center  font-bold">
                     R$ {abs.valor ? formatCurrency(abs.valor) : "—"}
                   </TableCell>
+                  <TableCell className="text-center">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="cursor-pointer text-destructive hover:text-destructive/90"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(abs.id);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-20">
+                <TableCell colSpan={6} className="text-center py-20">
                   <div className="flex flex-col items-center gap-5 text-muted-foreground">
                     <div className="p-8 bg-muted/50 rounded-full">
                       <Fuel className="w-16 h-16" />
