@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { AlertCircle, Badge, CheckCircle2, Clock, FileText } from "lucide-react";
+import { FileText, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { DocumentFormModal } from "../DocumentModal";
+import { SERVER_URL } from "@/url";
 
 interface DocumentsSectionProps {
   documentos: any[];
@@ -16,6 +17,27 @@ export function DocumentsSection({ documentos, veiculoId, onDocumentAdded }: Doc
   const formatDate = (dateString: string) => {
     return dateString ? new Date(dateString).toLocaleDateString("pt-BR") : "—";
   };
+
+  const handleDeleteDocument = async (documentoId: number) => {
+    if (!window.confirm("Tem certeza que deseja excluir este documento?")) return;
+
+    try {
+      const res = await fetch(`${SERVER_URL}/veiculo/${veiculoId}/documentos/${documentoId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText);
+      }
+      await onDocumentAdded();
+    } catch (err) {
+      console.error("Erro ao deletar documento:", err);
+      alert("Erro ao excluir documento");
+    }
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -35,11 +57,12 @@ export function DocumentsSection({ documentos, veiculoId, onDocumentAdded }: Doc
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center w-1/5">Documento</TableHead>
-              <TableHead className="text-center w-1/5">Tipo</TableHead>
-              <TableHead className="text-center w-1/5">Vencimento</TableHead>
-              <TableHead className="text-center w-1/5">Antecipação</TableHead>
-              <TableHead className="text-center w-1/5">Dias para Vencimento</TableHead>
+              <TableHead className="text-center w-1/6">Documento</TableHead>
+              <TableHead className="text-center w-1/6">Tipo</TableHead>
+              <TableHead className="text-center w-1/6">Vencimento</TableHead>
+              <TableHead className="text-center w-1/6">Antecipação</TableHead>
+              <TableHead className="text-center w-1/6">Dias para Vencimento</TableHead>
+              <TableHead className="text-center w-1/6">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -72,12 +95,22 @@ export function DocumentsSection({ documentos, veiculoId, onDocumentAdded }: Doc
                     <TableCell className="text-center">
                       {doc.dias_para_vencimento ?? "—"}
                     </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-500/10 cursor-pointer"
+                        onClick={() => handleDeleteDocument(doc.id)}
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 );
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-16">
+                <TableCell colSpan={6} className="text-center py-16">
                   <div className="flex flex-col items-center gap-4 text-muted-foreground">
                     <div className="p-6 bg-muted/50 rounded-full">
                       <FileText className="w-12 h-12" />

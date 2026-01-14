@@ -204,7 +204,7 @@ export class VeiculoService {
     return { success: true, deleted: images.length };
   }
 
-/**Registra um novo documento a um veículo */
+  /**Registra um novo documento a um veículo */
   async uploadDocument(veiculoId: number, file: Express.Multer.File, data: any) {
     const arquivoUrl = `/uploads/documentos/${file.filename}`;
     const vencimento = data.vencimento ? new Date(data.vencimento) : null;
@@ -223,7 +223,37 @@ export class VeiculoService {
     });
   }
 
-    /**Cria novo registro de ocorrência de veículo */
+  /*Deleta um documento de um veículo*/
+  async deleteDocumento(documentoId: number) {
+    const documento = await this.prisma.documento_veiculo.findUnique({
+      where: { id: documentoId },
+    });
+
+    if (!documento) {
+      throw new Error('Documento não encontrado');
+    }
+
+    if (documento.arquivo) {
+      const filePath = path.join(
+        process.cwd(),
+        'uploads',
+        'documentos',
+        path.basename(documento.arquivo),
+      );
+
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    await this.prisma.documento_veiculo.delete({
+      where: { id: documentoId },
+    });
+
+    return { success: true };
+  }
+
+  /**Cria novo registro de ocorrência de veículo */
   async createOccurrence(veiculoId: number, file: Express.Multer.File | undefined, data: any) {
     const anexoUrl = file ? `/uploads/ocorrencias/${file.filename}` : null;
 

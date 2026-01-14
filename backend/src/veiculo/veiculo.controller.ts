@@ -161,6 +161,13 @@ export class VeiculoController {
     return this.veiculoService.delete(id);
   }
 
+  @Delete(':veiculoId/documentos/:documentoId')
+  async deleteDocumento(
+    @Param('documentoId') documentoId: string,
+  ) {
+    return this.veiculoService.deleteDocumento(Number(documentoId));
+  }
+
   /** Busca um veículo específico pelo ID */
   @Get(':id')
   findOne(@Param('id') id: string) {

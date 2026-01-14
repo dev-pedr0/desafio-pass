@@ -131,7 +131,7 @@ export function DocumentFormModal({ veiculoId, open, onClose, onDocumentAdded }:
                             <PopoverTrigger asChild>
                                 <Button
                                     variant={"outline"}
-                                    className="w-full justify-start text-left font-normal"
+                                    className="w-full justify-start text-left font-normal cursor-pointer"
                                 >
                                     <CalendarIcon className="mr-2 h-4 w-4" />
                                     {form.vencimento ? format(form.vencimento, "PPP", { locale: ptBR }) : <span>Selecione a data</span>}
@@ -184,7 +184,14 @@ export function DocumentFormModal({ veiculoId, open, onClose, onDocumentAdded }:
                             type="file"
                             accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg"
                             onChange={handleFileChange}
+                            className="hidden"
                         />
+                        <label
+                            htmlFor="arquivo"
+                            className="flex items-center justify-center gap-2 px-4 py-2 border rounded-md cursor-pointer hover:bg-muted transition text-sm font-medium"
+                        >
+                            📎 Selecionar arquivo
+                        </label>
                         {form.arquivo && (
                             <p className="text-xs text-green-600">Arquivo selecionado: {form.arquivo.name}</p>
                         )}
