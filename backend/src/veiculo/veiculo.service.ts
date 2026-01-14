@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import path from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
+import * as fs from 'fs';
 
 @Injectable()
 export class VeiculoService {
@@ -180,10 +182,26 @@ export class VeiculoService {
   }
 
   async deleteAllImages(veiculoId: number) {
-    await this.prisma.imagem_veiculo.deleteMany({
-      where: { veiculo_id: veiculoId },
+    const images = await this.prisma.imagem_veiculo.findMany({
+      where: {veiculo_id: veiculoId}
     });
-    return { success: true };
+
+    for (const img of images) {
+      const filePath = path.join(process.cwd(), img.url.replace('/', ''));
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch (err) {
+          console.error(`Erro ao apagar arquivo ${filePath}`, err);
+        }
+      }
+    }
+
+    await this.prisma.imagem_veiculo.deleteMany({
+      where: {veiculo_id: veiculoId},
+    });
+
+    return { success: true, deleted: images.length };
   }
 
 /**Registra um novo documento a um veículo */
