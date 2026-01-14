@@ -1,10 +1,9 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Put, Query, Res, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Res, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { VeiculoService } from './veiculo.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
-import { existsSync } from 'fs';
-import express from "express";
+import express from 'express';
 
 @Controller('veiculo')
 export class VeiculoController {
@@ -59,24 +58,16 @@ export class VeiculoController {
   }
 
   /*Busca o arquivo de uma ocorrência*/
-  @Get("ocorrencias/arquivo/:id")
-  async getOcorrenciaArquivo(
-    @Param("id") id: string,
+  @Get('ocorrencias/arquivo/:id')
+  async getOccurrenceFile(
+    @Param('id', ParseIntPipe) id: number,
     @Res() res: express.Response,
   ) {
-    const ocorrencia = await this.veiculoService.findOcorrenciaById(Number(id));
+    const relativePath = await this.veiculoService.getOccurrenceFilePath(id);
 
-    if (!ocorrencia || !ocorrencia.anexo) {
-      throw new NotFoundException("Arquivo não encontrado");
-    }
+    const absolutePath = join(process.cwd(), relativePath);
 
-    const filePath = join(process.cwd(), ocorrencia.anexo);
-
-    if (!existsSync(filePath)) {
-      throw new NotFoundException("Arquivo não existe no servidor");
-    }
-
-    return res.sendFile(filePath);
+    return res.sendFile(absolutePath);
   }
 
   /** Cria um novo veículo */
@@ -229,11 +220,11 @@ export class VeiculoController {
   }
 
   /* Deleta um ocorrencia por ID */
-  @Delete(':veiculoId/ocorrencias/:ocorrenciaId')
-  async deleteOcorrencia(
-    @Param('ocorrenciaId') ocorrenciaId: string,
+  @Delete('ocorrencias/:id')
+  async deleteOccurrence(
+    @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.veiculoService.deleteOcorrencia(Number(ocorrenciaId));
+    return this.veiculoService.deleteOcorrencia(id);
   }
 
   /** Busca um veículo específico pelo ID */

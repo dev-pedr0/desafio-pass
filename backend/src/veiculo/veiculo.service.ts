@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import path from 'path';
+import path, { join } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as fs from 'fs';
+import { unlink } from 'fs';
 
 @Injectable()
 export class VeiculoService {
@@ -302,6 +303,20 @@ export class VeiculoService {
     });
   }
 
+  /**Busca arquivo de ocorrência */
+  async getOccurrenceFilePath(ocorrenciaId: number): Promise<string> {
+    const ocorrencia = await this.prisma.ocorrencia_veiculo.findUnique({
+      where: { id: ocorrenciaId },
+      select: { anexo: true },
+    });
+
+    if (!ocorrencia || !ocorrencia.anexo) {
+      throw new NotFoundException('Arquivo não encontrado');
+    }
+
+    return ocorrencia.anexo;
+  }
+
   /** Atualiza uma ocorrencia */
   async updateOccurrence(
     veiculoId: number,
@@ -341,24 +356,22 @@ export class VeiculoService {
 
   /*Deleta uma ocorrencia de um veículo*/
   async deleteOcorrencia(ocorrenciaId: number) {
-    const ocorrencia  = await this.prisma.ocorrencia_veiculo.findUnique({
-      where: { id: ocorrenciaId },
-    });
+      const occurrence = await this.prisma.ocorrencia_veiculo.findUnique({
+        where: { id: ocorrenciaId },
+        select: { anexo: true },
+      });
 
-    if (!ocorrencia) {
-      throw new Error('Ocorrência não encontrada');
+    if (!occurrence) {
+      throw new NotFoundException('Ocorrência não encontrada');
     }
 
-    if (ocorrencia.anexo) {
-      const filePath = path.join(
-        process.cwd(),
-        "uploads",
-        "ocorrencias",
-        ocorrencia.anexo
-      );
+    if (occurrence.anexo) {
+      const filePath = join(process.cwd(), occurrence.anexo);
 
-      if (fs.existsSync(filePath)) {
+      try {
         fs.unlinkSync(filePath);
+      } catch (err) {
+        console.warn('Arquivo não encontrado no disco:', filePath);
       }
     }
 

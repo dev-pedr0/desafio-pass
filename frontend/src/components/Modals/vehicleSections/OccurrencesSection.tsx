@@ -24,6 +24,21 @@ export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAd
     });
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm("Deseja realmente excluir esta ocorrência?")) return;
+
+    const res = await fetch(`${SERVER_URL}/veiculo/ocorrencias/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      alert("Erro ao deletar ocorrência");
+      return;
+    }
+
+    await onOccurrenceAdded();
+  };
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between border-b pb-5 -mx-8 px-8 bg-background/80 backdrop-blur-sm">
@@ -43,15 +58,16 @@ export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAd
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-1/4">
+              <TableHead className="w-1/5">
                 <div className="flex items-center gap-2 justify-center">
                   <Calendar className="w-4 h-4" />
                   Data
                 </div>
               </TableHead>
-              <TableHead className="w-1/4">Tipo de Ocorrência</TableHead>
-              <TableHead className="text-center w-1/4">Seriedade</TableHead>
-              <TableHead className="text-center w-1/4">Arquivo</TableHead>            
+              <TableHead className="w-1/5">Tipo de Ocorrência</TableHead>
+              <TableHead className="text-center w-1/5">Seriedade</TableHead>
+              <TableHead className="text-center w-1/5">Arquivo</TableHead>
+              <TableHead className="text-center w-1/5">Ações</TableHead>          
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,7 +104,7 @@ export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAd
                     <TableCell className="text-center">
                       {oc.anexo ? (
                         <a
-                          href={`${SERVER_URL}/ocorrencias/arquivo/${oc.id}`}
+                          href={`${SERVER_URL}/veiculo/ocorrencias/arquivo/${oc.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary hover:underline"
@@ -99,12 +115,25 @@ export function OccurrencesSection({ ocorrencias = [], veiculoId, onOccurrenceAd
                         <span className="text-muted-foreground">—</span>
                       )}
                     </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        className="cursor-pointer"
+                        variant="destructive"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(oc.id);
+                        }}
+                      >
+                        Excluir
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 );
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-16">
+                <TableCell colSpan={5} className="text-center py-16">
                   <div className="flex flex-col items-center gap-4 text-muted-foreground">
                     <div className="p-6 bg-muted/50 rounded-full">
                       <AlertTriangle className="w-12 h-12" />
